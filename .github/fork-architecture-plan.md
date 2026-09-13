@@ -1759,6 +1759,12 @@ canonical `phlodgate_bridge` scoreboard objective; the add-on directly polls tha
 authoritative companion-mode handshake. This signal proves only server detection, not generic
 machine, fluid, automation, or synchronization execution.
 
+The bundled Geyser `2.11.2-SNAPSHOT` API exposes global `GeyserDefineResourcePacksEvent`
+registration, which Hydraulic already uses for every built companion `.mcpack`; it does not expose
+`SessionLoadResourcePacksEvent`. Resource-pack delivery is therefore automatic for every
+Bedrock/Geyser session in this build, but per-session companion-pack selection is not an available
+public integration point and must not be represented as implemented.
+
 The locked responsibility split is:
 
 ```text

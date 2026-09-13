@@ -381,6 +381,9 @@ add-on execution model to hook into when the backing server is a Java server. Be
 * The companion's **resource pack** is built, content-addressed, cached, and registered with
   Geyser through the same `GeyserDefineResourcePacksEvent` mechanism used for mod-converted
   packs, so it is delivered automatically to every Bedrock/Geyser session.
+       The bundled Geyser `2.11.2-SNAPSHOT` API exposes this global registration event but does not
+       expose `SessionLoadResourcePacksEvent`; companion-pack selection is therefore global in this
+       build, not dynamically varied per session.
 * The companion's **behavior pack** is never sent over the network or executed by Geyser. If a
   companion's behavior pack contains a Script API module meant to run everywhere, the player must
   enable it themselves as a Bedrock "Global Resource" on their own client. Phlodgate only parses
