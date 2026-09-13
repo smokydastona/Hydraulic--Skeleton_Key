@@ -812,10 +812,6 @@ public final class TransferBridgeFactory {
         }
     }
 
-    private static boolean hasMethod(@NotNull Object target, @NotNull String... names) {
-        return findMethod(target, names) != null;
-    }
-
     private static boolean hasCompatibleMethod(
         @NotNull Object target,
         @NotNull String[] names,

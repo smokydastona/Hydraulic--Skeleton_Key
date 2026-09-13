@@ -32,6 +32,11 @@ public final class MachineProcessingBridge {
         this.recipes = List.copyOf(recipes);
     }
 
+    @NotNull
+    public CompiledCompatibilityPlan plan() {
+        return this.plan;
+    }
+
     public int progress() {
         return this.progress;
     }

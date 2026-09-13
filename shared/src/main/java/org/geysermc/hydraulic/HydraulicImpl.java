@@ -11,8 +11,6 @@ import org.geysermc.hydraulic.platform.mod.ModInfo;
 import org.geysermc.hydraulic.storage.ModStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.configurate.ConfigurateException;
 
 import java.nio.file.Path;
@@ -25,11 +23,8 @@ import java.util.function.Consumer;
  * Main class of the Hydraulic mod.
  */
 public class HydraulicImpl implements EventRegistrar {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Constants.MOD_NAME);
-
     private static HydraulicImpl instance;
 
-    private final HydraulicPlatform platform;
     private final HydraulicBootstrap bootstrap;
     private final PackManager packManager;
     private final HydraulicConfig config;
@@ -41,7 +36,6 @@ public class HydraulicImpl implements EventRegistrar {
     private HydraulicImpl(HydraulicPlatform platform, HydraulicBootstrap bootstrap) {
         instance = this;
 
-        this.platform = platform;
         this.bootstrap = bootstrap;
         this.packManager = new PackManager(this);
         try {

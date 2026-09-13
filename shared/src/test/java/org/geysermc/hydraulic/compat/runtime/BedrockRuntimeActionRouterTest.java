@@ -90,7 +90,8 @@ class BedrockRuntimeActionRouterTest {
             routed,
             discovery,
             new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 2, 1, "up"),
-            held
+            held,
+            null
         );
 
         assertEquals(BedrockRuntimeActionRouter.Status.MUTATED, result.status());
@@ -112,7 +113,8 @@ class BedrockRuntimeActionRouterTest {
             routed,
             discovery,
             new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null),
-            held
+            held,
+            null
         );
 
         assertEquals(BedrockRuntimeActionRouter.Status.MUTATION_REJECTED, result.status());
@@ -131,7 +133,8 @@ class BedrockRuntimeActionRouterTest {
             routed,
             discovery,
             new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 2, null),
-            held
+            held,
+            null
         );
 
         assertEquals(BedrockRuntimeActionRouter.Status.MUTATION_REJECTED, result.status());

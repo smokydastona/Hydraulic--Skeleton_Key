@@ -8,6 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
+import org.geysermc.geyser.api.GeyserApi;
+import org.geysermc.geyser.api.connection.GeyserConnection;
 import org.geysermc.geyser.session.GeyserSession;
 import org.geysermc.hydraulic.HydraulicImpl;
 import org.geysermc.hydraulic.compat.CompatibilityRegistry;
@@ -16,9 +18,17 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class BedrockRuntimeActionRouter {
     private static final Logger LOGGER = LoggerFactory.getLogger("HydraulicRuntimeActions");
     private static final int ITEM_USE_ON_BLOCK = 0;
+
+    // Per-session dirty-state/sync pipeline so any resolved block-use mutation is delivered back
+    // to the originating Bedrock client, not only recorded server-side.
+    private static final Map<GeyserSession, SessionSync> SESSION_SYNC = new ConcurrentHashMap<>();
 
     private BedrockRuntimeActionRouter() {
     }
@@ -32,14 +42,28 @@ public final class BedrockRuntimeActionRouter {
         RuntimeTraceId traceId = RuntimeTraceId.create();
         ServerPlayer player = player(session);
         if (player == null) {
+            SESSION_SYNC.remove(session);
             return new RuntimeActionResult(traceId, Status.TARGET_UNAVAILABLE, null, null, "No Java player for Bedrock session");
         }
-        return route(
-            packet,
-            RuntimeTargetDiscovery.forGeyserSession(compatibilityRegistry.dispatchTable(), session),
-            player.level().dimension().identifier().toString(),
-            traceId
-        );
+
+        RuntimeTargetDiscovery discovery = RuntimeTargetDiscovery.forGeyserSession(compatibilityRegistry.dispatchTable(), session);
+        RuntimeActionResult routed = route(packet, discovery, player.level().dimension().identifier().toString(), traceId);
+        if (routed.status() != Status.TARGET_RESOLVED || routed.blockIdentifier() == null) {
+            return routed;
+        }
+
+        var plan = compatibilityRegistry.dispatchTable().block(routed.blockIdentifier());
+        BlockUseActionPlan action = plan == null ? null : BlockUseActionPlan.from(plan.inventoryFacts());
+        if (action == null) {
+            return routed;
+        }
+
+        SessionSync sync = sessionSync(session);
+        RuntimeActionResult mutated = executeItemAction(routed, discovery, action, new PlayerHeldItemAccess(player), sync.dirtyStateTracker());
+        if (mutated.status() == Status.MUTATED) {
+            flushAndLog(sync);
+        }
+        return mutated;
     }
 
     @NotNull
@@ -75,7 +99,44 @@ public final class BedrockRuntimeActionRouter {
         if (action == null) {
             return routed;
         }
-        return executeItemAction(routed, discovery, action, new PlayerHeldItemAccess(player));
+
+        GeyserSession bedrockSession = bedrockSessionFor(player);
+        SessionSync sync = bedrockSession != null ? sessionSync(bedrockSession) : null;
+        RuntimeActionResult mutated = executeItemAction(routed, discovery, action, new PlayerHeldItemAccess(player), sync != null ? sync.dirtyStateTracker() : null);
+        if (mutated.status() == Status.MUTATED && sync != null) {
+            flushAndLog(sync);
+        }
+        return mutated;
+    }
+
+    @Nullable
+    private static GeyserSession bedrockSessionFor(@NotNull ServerPlayer player) {
+        try {
+            GeyserConnection connection = GeyserApi.api().connectionByUuid(player.getUUID());
+            return connection instanceof GeyserSession session ? session : null;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    @NotNull
+    private static SessionSync sessionSync(@NotNull GeyserSession session) {
+        return SESSION_SYNC.computeIfAbsent(session, s -> {
+            DirtyStateTracker dirtyStateTracker = new DirtyStateTracker();
+            SyncDispatcher dispatcher = new SyncDispatcher(dirtyStateTracker, new SyncPlanner(), new SyncEncoder(), new GeyserSyncTransport(s));
+            return new SessionSync(dirtyStateTracker, dispatcher);
+        });
+    }
+
+    private static void flushAndLog(@NotNull SessionSync sync) {
+        for (SyncDeliveryResult result : sync.dispatcher().flush()) {
+            if (!result.successfulHandoff() && result.status() != SyncDeliveryStatus.UNSUPPORTED) {
+                LOGGER.warn("Runtime sync delivery failed for {} ({}): {}", result.change().blockIdentifier(), result.status(), result.reason());
+            }
+        }
+    }
+
+    private record SessionSync(@NotNull DirtyStateTracker dirtyStateTracker, @NotNull SyncDispatcher dispatcher) {
     }
 
     @NotNull
@@ -122,7 +183,8 @@ public final class BedrockRuntimeActionRouter {
         @NotNull RuntimeActionResult routed,
         @NotNull RuntimeTargetDiscovery discovery,
         @NotNull BlockUseActionPlan action,
-        @NotNull HeldItemAccess heldItemAccess
+        @NotNull HeldItemAccess heldItemAccess,
+        @Nullable DirtyStateTracker dirtyStateTracker
     ) {
         if (routed.status() != Status.TARGET_RESOLVED || routed.position() == null || routed.blockIdentifier() == null) {
             return routed;
@@ -138,7 +200,7 @@ public final class BedrockRuntimeActionRouter {
             new TransferBridgeFactory.ItemStackView(heldItem.itemId(), action.count()),
             action.slot(),
             action.side(),
-            null,
+            dirtyStateTracker,
             routed.traceId()
         );
         if (!transfer.committed() || transfer.moved() != action.count()) {
