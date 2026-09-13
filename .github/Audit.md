@@ -1,61 +1,154 @@
-# FULL SYSTEM AUDIT — ABSOLUTE ZERO-TRUST MODE
+# FULL SYSTEM AUDIT — ABSOLUTE ZERO-TRUST / MISSION-READINESS KILL-SHOT
 
-You are operating in **ABSOLUTE ZERO-TRUST, FULL-WORKSPACE AUDIT MODE**.
-
-Your task is to perform a complete, adversarial, evidence-driven examination of the entire workspace.
+You are operating in **ABSOLUTE ZERO-TRUST, FULL-WORKSPACE, ADVERSARIAL AUDIT MODE**.
 
 This is a **pre-release kill-shot audit**.
 
-You must assume that:
+Your purpose is **not** to demonstrate that the repository is healthy.
+
+Your purpose is to determine, with evidence, **exactly what is real, what is incomplete, what is unreachable, what is misleading, what is merely scaffolding, and what will fail under real use**.
+
+Assume that:
 
 * documented features may not actually work
-* tests may provide incomplete or misleading confidence
-* code may compile while being functionally wrong
-* architecture diagrams may not match the implementation
-* reports may claim support that runtime code cannot actually provide
-* apparently unused code may be critical through reflection, registration, generated resources, or runtime discovery
-* apparently complete implementations may contain hidden stubs, dead paths, fallback-only behavior, or unverified assumptions
+* passing tests may provide false confidence
+* code may compile while being functionally incorrect
+* architecture diagrams may not match implementation
+* reports may claim support that runtime code cannot provide
+* interfaces may exist without implementations
+* implementations may exist without registrations
+* registered implementations may never be selected
+* selected implementations may never execute
+* execution may occur without authoritative state mutation
+* mutation may occur without persistence
+* persistence may occur without synchronization
+* synchronization may occur without transport
+* transport may occur without client observation
+* client observation may occur without correct gameplay semantics
+* generated artifacts may conceal source defects
+* fallback behavior may mask failed primary implementations
+* test fixtures may be substantially simpler than real production objects
+* mocks may validate contracts that production violates
+* caches may return correct-looking stale data
+* analyzers may report capabilities that runtime never consumes
+* runtime plans may exist but never reach dispatch
+* adapters may be registered but unreachable
+* behavior-pack files may exist but be impossible to execute remotely
+* resource-pack success may be incorrectly classified as gameplay compatibility
+* server startup may be incorrectly classified as end-to-end success
+* packet creation may be incorrectly classified as client-observed synchronization
+* previous audits may themselves contain false conclusions
+* commit messages may describe intended work rather than completed work
+* documentation may describe future architecture rather than current architecture
 
-Do not trust names, comments, documentation, tests, commit messages, generated reports, or previous audit conclusions without verification against the live code and executable behavior.
+**Do not trust names, comments, documentation, tests, reports, commit messages, issue trackers, generated output, architecture plans, or previous audit conclusions without independently verifying them against the live workspace and executable behavior.**
 
-The workspace itself, its build output, tests, runtime behavior, and generated artifacts are the source of truth.
+The **workspace, source code, build system, generated artifacts, runtime behavior, tests, and directly observable results are the source of truth.**
 
 ---
 
-# 🔒 NON-NEGOTIABLE RULES
+# 0. PRIMARY MISSION
+
+Before doing anything else, determine the project's **actual mission**.
+
+Extract the intended product-level objective from:
+
+* README files
+* architecture plans
+* configuration
+* public APIs
+* entry points
+* tests
+* generated reports
+* implementation
+* runtime behavior
+
+Then write a concise:
+
+```text
+ACTUAL PRODUCT MISSION:
+```
+
+Do not confuse implementation goals with product goals.
+
+For example:
+
+```text
+"Generate a Bedrock resource pack"
+```
+
+is an implementation capability.
+
+It is not equivalent to:
+
+```text
+"Allow a Bedrock player to use a Java mod machine."
+```
+
+The audit MUST distinguish:
+
+```text
+ENGINEERING HEALTH
+```
+
+from:
+
+```text
+PRODUCT / MISSION CAPABILITY
+```
+
+A repository may be technically clean while still being substantially incomplete relative to its actual mission.
+
+---
+
+# 1. NON-NEGOTIABLE ZERO-TRUST RULES
 
 You MUST:
 
-1. Enumerate the entire workspace before beginning substantive analysis.
-2. Build a complete file inventory.
-3. Track every file with an explicit analysis status.
-4. Analyze 100% of files within the defined workspace scope.
-5. Perform at least two independent full analysis passes.
-6. Use different perspectives for each pass.
-7. Cross-reference findings between passes.
-8. Challenge and attempt to disprove conclusions from the first pass.
-9. Provide evidence for every factual claim.
-10. Distinguish verified facts from inference.
-11. Investigate uncertainty instead of guessing.
-12. Verify implementation paths rather than trusting declarations.
-13. Trace important features from entry point to observable result.
-14. Search specifically for incomplete implementations.
-15. Search specifically for stale architecture.
-16. Search specifically for code that appears correct but is not connected to the real runtime path.
-17. Validate that tests exercise the production implementation rather than parallel or mocked logic where possible.
-18. Compare documentation and architecture plans against the current repository state.
-19. Produce a concrete remediation plan for every confirmed issue.
-20. Continue until the defined audit scope has been exhausted.
+1. Enumerate the entire workspace before substantive analysis.
+2. Establish an explicit audit boundary.
+3. Build a complete file inventory.
+4. Track every file with an explicit analysis status.
+5. Analyze 100% of files inside the defined scope.
+6. Perform at least TWO independent analysis passes.
+7. Use materially different perspectives for each pass.
+8. Cross-reference both passes.
+9. Attempt to DISPROVE Pass 1 conclusions during Pass 2.
+10. Audit the previous audit, if one exists.
+11. Provide evidence for every factual claim.
+12. Distinguish observed fact from inference.
+13. Investigate uncertainty instead of guessing.
+14. Trace implementation paths rather than trusting declarations.
+15. Trace important features from entry point to observable result.
+16. Search specifically for incomplete implementations.
+17. Search specifically for stale architecture.
+18. Search specifically for unreachable implementations.
+19. Search specifically for fallback masking.
+20. Search specifically for disconnected runtime plans.
+21. Validate that tests exercise production paths.
+22. Validate real runtime wiring.
+23. Compare documentation against current implementation.
+24. Compare architecture plans against current implementation.
+25. Measure actual capability, not merely infrastructure.
+26. Create a concrete remediation plan for every confirmed issue.
+27. Continue until the defined audit scope is exhausted.
 
 You are NOT allowed to declare the audit complete if:
 
 * any file remains unaccounted for
-* any file is marked "not analyzed" without an explicit scope justification
+* any file is marked "not analyzed" without explicit justification
 * any critical execution path remains untraced
-* a claimed major feature has not been traced to its real implementation
-* a major conclusion lacks evidence
-* the second pass has not challenged the first pass
-* the coverage report does not reconcile exactly with the inventory
+* any major feature remains untraced
+* any major conclusion lacks evidence
+* Pass 2 has not challenged Pass 1
+* coverage does not reconcile exactly
+* a claimed capability has not been traced to production execution
+* a major capability has only static/unit evidence but is described as end-to-end verified
+* fallback behavior is being counted as full implementation
+* visual support is being counted as behavioral support
+* server-side execution is being counted as client interoperability
+* packet generation is being counted as client observation
+* a test fixture is being treated as proof of arbitrary real-world compatibility
 
 Do not stop because the repository is large.
 
@@ -63,42 +156,138 @@ Do not stop because an issue is difficult.
 
 Do not replace investigation with assumptions.
 
-Do not say "likely", "probably", "appears", or "seems" when the answer can be determined by inspecting the workspace.
+Do not optimize for a positive result.
 
-If the evidence is genuinely insufficient, explicitly state:
+Do not optimize for finding fewer issues.
+
+---
+
+# 2. EVIDENCE HIERARCHY
+
+Every significant claim MUST be assigned an evidence level.
+
+Use exactly:
 
 ```text
-UNVERIFIED
-Evidence currently insufficient.
-Further investigation required:
-<exact next investigation>
+E0 — DOCUMENTATION ONLY
+E1 — STATIC CODE EVIDENCE
+E2 — UNIT TEST VERIFIED
+E3 — INTEGRATION TEST VERIFIED
+E4 — LIVE JAVA/SERVER RUNTIME VERIFIED
+E5 — NETWORK/TRANSPORT VERIFIED
+E6 — ACTUAL BEDROCK CLIENT OBSERVED
+```
+
+Never upgrade evidence without actual supporting evidence.
+
+Examples:
+
+```text
+A class exists:
+E1
+
+A unit test executes it:
+E2
+
+A real server executes it:
+E4
+
+Geyser transport carries the resulting operation:
+E5
+
+A real Bedrock client observes and interacts with the result:
+E6
+```
+
+A feature supported only at E1–E4 MUST NOT be reported as:
+
+```text
+END-TO-END VERIFIED
 ```
 
 ---
 
-# PHASE 0 — DEFINE THE AUDIT BOUNDARY
+# 3. COMPLETION VOCABULARY
 
-Before analysis begins, establish the exact audit scope.
+Use these classifications exactly:
 
-Identify:
+```text
+NOT PRESENT
+
+DOCUMENTED ONLY
+
+SCAFFOLDING ONLY
+
+ANALYSIS ONLY
+
+PLAN ONLY
+
+GENERATED OUTPUT ONLY
+
+PARTIALLY EXECUTABLE
+
+EXECUTABLE
+
+EXECUTABLE BUT UNVERIFIED
+
+SERVER-VERIFIED
+
+TRANSPORT-VERIFIED
+
+CLIENT-OBSERVED
+
+END-TO-END VERIFIED
+
+COMPLETE
+```
+
+Never collapse these categories.
+
+In particular:
+
+```text
+ANALYSIS ≠ EXECUTION
+
+EXECUTION ≠ MUTATION
+
+MUTATION ≠ SYNCHRONIZATION
+
+SYNCHRONIZATION ≠ TRANSPORT
+
+TRANSPORT ≠ CLIENT OBSERVATION
+
+CLIENT OBSERVATION ≠ CORRECT GAMEPLAY SEMANTICS
+```
+
+---
+
+# 4. PHASE 0 — AUDIT BOUNDARY
+
+Before analysis begins, identify:
 
 * workspace root
 * source roots
-* modules/subprojects
+* modules
+* subprojects
 * build systems
 * test roots
 * runtime entry points
 * configuration roots
 * documentation roots
 * scripts
-* generated-source directories
-* generated-output directories
-* vendored dependencies
-* binary assets
+* generated sources
+* generated outputs
+* resources
+* assets
 * archives
-* ignored files that still exist locally
+* vendored dependencies
+* ignored files
+* local runtime directories
+* caches
+* temporary directories
+* worktrees
 
-Classify every discovered path as one of:
+Classify every path as:
 
 ```text
 PRODUCTION_CODE
@@ -112,92 +301,78 @@ GENERATED_OUTPUT
 DEPENDENCY
 BINARY_ASSET
 ARCHIVE
+RUNTIME_DATA
+CACHE
+TEMPORARY
 UNKNOWN
 ```
 
-Do not silently exclude files.
+Do not silently exclude anything.
 
-If a category is excluded from deep semantic analysis, explain:
+If something is excluded from deep semantic analysis, record:
 
 ```text
 EXCLUDED FROM DEEP ANALYSIS
+
 Path:
+File count:
+
 Reason:
 Risk of exclusion:
-Alternative validation performed:
+Alternative validation:
+Why exclusion cannot invalidate the audit:
 ```
 
-Create an audit manifest before proceeding.
+Create the audit manifest BEFORE substantive analysis.
 
 ---
 
-# PHASE 1 — COMPLETE FILE INVENTORY
+# 5. PHASE 1 — COMPLETE FILE INVENTORY
 
-Recursively enumerate every file in the workspace.
+Recursively enumerate every file.
 
 Produce:
 
-## 1. Directory Tree
+## 5.1 Directory Tree
 
-Build a complete directory structure.
+Maintain a complete internal directory tree.
 
-Do not truncate the internal audit inventory.
+The final report may summarize enormous generated/cache directories, but the internal manifest MUST account for every file.
 
-The final report may summarize extremely large generated directories, but the internal coverage manifest must still account for every file.
+## 5.2 File Classification
 
-## 2. File Classification
+Classify all files.
 
-Group files by:
-
-* production code
-* test code
-* configuration
-* build files
-* resources
-* documentation
-* generated content
-* binaries
-* archives
-* unknown files
-
-## 3. Size Analysis
+## 5.3 Size Analysis
 
 Identify:
 
 * unusually large files
-* unusually large source files
-* generated files accidentally committed
-* files with suspicious duplication
-* oversized configuration files
-* potential hidden monoliths
+* giant source files
+* monoliths
+* accidentally committed generated files
+* suspicious binaries
+* oversized configuration
+* duplicate artifacts
 
-## 4. Duplication Analysis
+## 5.4 Duplication Analysis
 
-Detect:
+Search for:
 
-* duplicate source files
-* near-duplicate implementations
-* copied classes with diverging behavior
-* duplicate resource definitions
+* duplicate source
+* near-duplicate source
+* copied classes
+* divergent copies
+* duplicate registries
 * duplicate configuration
-* multiple implementations of the same abstraction
-* old architecture left behind after replacement
+* duplicate resource definitions
+* duplicate compatibility logic
+* duplicate caches
+* obsolete implementations
 
-## 5. Suspicious Paths
+## 5.5 Suspicious Code Search
 
-Flag:
-
-* abandoned modules
-* obsolete directories
-* old migrations
-* unused generated output
-* duplicate test fixtures
-* dead resource packs
-* stale compatibility metadata
-* experimental implementations still reachable by production code
-* files whose names imply unfinished work
-
-Explicitly search for:
+Search for:
 
 ```text
 TODO
@@ -218,142 +393,320 @@ return null
 return false
 return 0
 UnsupportedOperationException
-IllegalStateException
 ```
 
-Do not automatically classify these as bugs.
+Also search for:
 
-Investigate every occurrence in context.
+```text
+empty methods
+no-op methods
+empty catch blocks
+catch-and-ignore
+swallowed exceptions
+always-true branches
+always-false branches
+constant return values
+dead feature flags
+unused registrations
+fallback-only factories
+empty adapters
+```
+
+Do not automatically classify them as bugs.
+
+Investigate every occurrence.
 
 ---
 
-# PHASE 2 — FIRST FULL FILE-BY-FILE PASS
+# 6. PHASE 2 — PASS 1: COMPLETE FILE-BY-FILE ANALYSIS
 
-Analyze every file.
+Analyze every file within scope.
 
-For each production or test source file, determine:
+For production/test source:
 
 ```text
 FILE:
 PATH:
 CLASSIFICATION:
-
 PRIMARY PURPOSE:
+ARCHITECTURAL ROLE:
 
 ENTRY POINTS:
-PUBLIC API / EXPORTS:
-IMPORTS / DEPENDENCIES:
+PUBLIC API:
+EXPORTS:
+
+IMPORTS:
+DEPENDENCIES:
 DEPENDENTS:
 
+REGISTRATION:
+DISCOVERY:
+REFLECTION:
+SERVICE LOADING:
+
 STATE OWNED:
+MUTATION:
 SIDE EFFECTS:
+
 I/O:
 NETWORK:
 FILESYSTEM:
 CACHE:
 THREADING:
-REGISTRATION:
-
-IMPORTANT ASSUMPTIONS:
+SCHEDULING:
 
 ERROR HANDLING:
+FALLBACK BEHAVIOR:
+ASSUMPTIONS:
 
 TEST COVERAGE:
+RUNTIME COVERAGE:
 
-ARCHITECTURAL ROLE:
+PRODUCTION REACHABILITY:
+ARCHITECTURAL STATUS:
 
 PASS 1 STATUS:
-[VALID / ISSUE FOUND / UNCLEAR / DEEPER INVESTIGATION REQUIRED]
+EVIDENCE:
 ```
 
-For every non-code file, determine:
+For non-code files:
 
 ```text
 FILE:
 PATH:
 CLASSIFICATION:
-
 PURPOSE:
-
-WHO CONSUMES IT:
-
-WHO PRODUCES IT:
-
-VALIDATION METHOD:
-
+PRODUCER:
+CONSUMERS:
+VALIDATION:
 RUNTIME IMPACT:
-
-STALE / UNUSED RISK:
-
+STALE RISK:
+REACHABILITY:
 PASS 1 STATUS:
-[VALID / ISSUE FOUND / UNCLEAR / DEEPER INVESTIGATION REQUIRED]
+EVIDENCE:
 ```
 
-Do not merely summarize.
+Do not merely summarize file contents.
 
-Trace references where necessary.
+Trace references when required.
 
 ---
 
-# PHASE 3 — IMPLEMENTATION COMPLETENESS AUDIT
+# 7. PHASE 3 — IMPLEMENTATION COMPLETENESS AUDIT
 
-This phase is mandatory.
-
-For every major subsystem and claimed feature, construct an implementation chain:
+For EVERY major feature, construct:
 
 ```text
 CLAIM
-  ↓
+ ↓
 ENTRY POINT
-  ↓
-REGISTRATION / DISCOVERY
-  ↓
-DATA FLOW
-  ↓
-CORE IMPLEMENTATION
-  ↓
-SIDE EFFECT / MUTATION
-  ↓
-OUTPUT / TRANSPORT
-  ↓
-OBSERVABLE RESULT
-  ↓
-TEST OR RUNTIME EVIDENCE
+ ↓
+REGISTRATION
+ ↓
+DISCOVERY
+ ↓
+ANALYSIS
+ ↓
+INTERMEDIATE REPRESENTATION
+ ↓
+COMPILATION
+ ↓
+CACHE
+ ↓
+RUNTIME SELECTION
+ ↓
+RUNTIME DISPATCH
+ ↓
+AUTHORITATIVE MUTATION
+ ↓
+PERSISTENCE
+ ↓
+SYNCHRONIZATION
+ ↓
+TRANSPORT
+ ↓
+CLIENT OBSERVATION
+ ↓
+CLIENT ACTION
+ ↓
+RETURN PATH
+ ↓
+AUTHORITATIVE JAVA MUTATION
 ```
 
-A feature must NOT be considered implemented merely because:
+Mark every stage:
+
+```text
+PRESENT
+PARTIAL
+MISSING
+UNVERIFIED
+NOT APPLICABLE
+```
+
+A feature MUST NOT be considered complete because:
 
 * a class exists
 * an interface exists
-* a method exists
-* a test exists
-* a report contains the feature
-* metadata can describe the feature
-* a compatibility analyzer recognizes the feature
-* a runtime plan contains an entry for the feature
+* an analyzer recognizes it
+* metadata describes it
+* a runtime plan contains it
+* a factory can construct it
+* a bridge exists
+* a report mentions it
+* JSON is generated
+* a unit test passes
+* a server starts
 
-The implementation must be traced into actual execution.
-
-Classify every major feature as:
-
-```text
-NOT PRESENT
-SCAFFOLDING ONLY
-ANALYSIS ONLY
-PLAN ONLY
-PARTIALLY EXECUTABLE
-EXECUTABLE
-EXECUTABLE BUT UNVERIFIED
-END-TO-END VERIFIED
-```
-
-Never collapse these categories.
+The full execution path matters.
 
 ---
 
-# PHASE 4 — CROSS-FILE AND SYSTEM-WIDE VALIDATION
+# 8. PHASE 4 — UNIVERSAL CAPABILITY AUDIT
 
-Build a dependency and interaction map.
+For every advertised capability, construct a capability matrix.
+
+At minimum inspect:
+
+```text
+BLOCK_ENTITY_DATA
+MACHINE_INVENTORY
+ITEM_TRANSFER
+FLUID_RUNTIME
+FLUID_TRANSFER
+ENERGY_TRANSFER
+MENU_CONTAINER
+AUTOMATION_ACCESS
+MACHINE_PROCESSING
+PRESENTATION
+NETWORK_SYNC
+ENTITY_REGISTRATION
+ENTITY_BEHAVIOR
+CUSTOM_RENDERING
+RECIPE_DISCOVERY
+STATE_SYNCHRONIZATION
+PLAYER_INTERACTION
+```
+
+For each:
+
+```text
+CAPABILITY:
+
+DISCOVERY:
+SEMANTIC FACT EXTRACTION:
+COMPATIBILITY IR:
+COMPILED PLAN:
+RUNTIME DISPATCH:
+JAVA MUTATION:
+PERSISTENCE:
+SYNC ENCODING:
+GEYSER TRANSPORT:
+BEDROCK REPRESENTATION:
+BEDROCK ACTION:
+JAVA RETURN PATH:
+
+EVIDENCE LEVEL:
+COMPLETION CLASS:
+```
+
+Explicitly distinguish:
+
+```text
+VISUAL SUPPORT
+INTERACTION SUPPORT
+STATE SUPPORT
+BEHAVIOR SUPPORT
+AUTOMATION SUPPORT
+NETWORK SUPPORT
+FULL GAMEPLAY SUPPORT
+```
+
+Never count visual conversion as gameplay compatibility.
+
+---
+
+# 9. PHASE 5 — SEMANTIC BEHAVIOR AUDIT
+
+Determine whether the system can discover **what a modded object actually does**, rather than merely what resources it has.
+
+Investigate whether the system can extract facts such as:
+
+```text
+block entity
+inventory
+input slots
+output slots
+item acceptance
+item extraction
+fluid input
+fluid output
+energy input
+energy output
+processing
+recipe source
+processing time
+redstone behavior
+automation
+sided access
+state transitions
+entity spawning
+particles
+sounds
+network synchronization
+menu topology
+server-only logic
+client-only logic
+custom rendering
+```
+
+For each capability ask:
+
+> How does Phlodgate discover this behavior for an arbitrary real mod?
+
+If the answer is:
+
+```text
+hardcoded adapter
+```
+
+record that.
+
+If the answer is:
+
+```text
+metadata manually supplied
+```
+
+record that.
+
+If the answer is:
+
+```text
+generic semantic discovery
+```
+
+trace and prove it.
+
+Identify the boundary between:
+
+```text
+RESOURCE KNOWLEDGE
+```
+
+and:
+
+```text
+BEHAVIOR KNOWLEDGE
+```
+
+This is a critical audit area.
+
+---
+
+# 10. PHASE 6 — CROSS-FILE / SYSTEM-WIDE VALIDATION
+
+Construct dependency and interaction graphs.
 
 Verify:
 
@@ -364,28 +717,37 @@ Verify:
 * annotations
 * generated code
 * runtime discovery
-* configuration references
+* configuration
 * resource references
 * identifiers
 * metadata bindings
 * test fixtures
-* build task dependencies
+* build dependencies
+* event handlers
+* packet handlers
+* callbacks
+* factories
+* registries
 
 Detect:
 
-* circular dependencies
-* hidden coupling
-* orphaned modules
-* unused abstractions
-* dead implementations
-* duplicate registries
-* competing sources of truth
-* stale interfaces
-* broken contracts
-* configuration that is never consumed
-* runtime code that cannot be reached
+```text
+ORPHANED CODE
+UNREACHABLE CODE
+DEAD IMPLEMENTATION
+DUPLICATE REGISTRY
+DUPLICATE SOURCE OF TRUTH
+BROKEN CONTRACT
+STALE INTERFACE
+HIDDEN COUPLING
+CIRCULAR DEPENDENCY
+UNUSED CONFIGURATION
+UNCONSUMED ANALYZER OUTPUT
+UNCONSUMED RUNTIME PLAN
+UNREACHABLE ADAPTER
+```
 
-For important subsystems, trace:
+For important paths trace:
 
 ```text
 INPUT
@@ -404,208 +766,309 @@ RUNTIME DISPATCH
  ↓
 STATE MUTATION
  ↓
-SYNCHRONIZATION
+SYNC
+ ↓
+TRANSPORT
  ↓
 OBSERVABLE RESULT
 ```
 
-Identify every point where:
+Identify where:
 
 * information is lost
 * assumptions change
 * data is reconstructed
 * metadata is reparsed
-* expensive work is repeated
-* compatibility decisions re-enter runtime hot paths
+* compatibility reasoning repeats
+* expensive work repeats
+* fallback behavior begins
+* semantic information is discarded
 
 ---
 
-# PHASE 5 — FUNCTIONAL INTENT VERIFICATION
+# 11. PHASE 7 — FUNCTIONAL INTENT / FALSE-COMPLETION AUDIT
 
-This is one of the highest-priority phases.
-
-Determine what the system is actually intended to do using:
-
-* architecture documentation
-* public API
-* subsystem naming
-* runtime entry points
-* tests
-* configuration
-* generated artifacts
-* integration behavior
-
-Then look for code that is:
+Find code that is:
 
 ```text
-VALID JAVA
+VALID CODE
 +
 VALID TYPES
 +
-VALID TESTS
+PASSING TESTS
 +
-WRONG SYSTEM BEHAVIOR
+WRONG PRODUCT BEHAVIOR
 ```
 
 Search specifically for:
 
-* correct transformations applied at the wrong stage
-* correct data written to the wrong destination
-* correct cache entries with incorrect invalidation
-* correct compatibility reports disconnected from runtime
-* correct runtime bridges never selected
+* transformations at wrong stages
+* correct data sent to wrong destinations
+* correct cache entries with bad invalidation
+* compatibility reports disconnected from runtime
+* runtime bridges never selected
 * generic systems bypassed by special cases
-* fallback behavior hiding failed implementations
-* visual support incorrectly classified as behavioral support
-* state changes that do not synchronize
-* synchronization that does not produce observable client state
-* actions recognized but not converted into authoritative mutation
+* fallback hiding primary failure
+* visual support mislabeled as behavior
+* state changes without synchronization
+* synchronization without client observation
+* recognized actions without authoritative mutation
 * metadata accepted but never compiled
-* compiled plans created but not consumed
+* compiled plans never consumed
 * adapters registered but never selected
-* tests exercising fixtures rather than production discovery
-* mocked success hiding real runtime failure
+* tests exercising fixtures instead of production discovery
+* test doubles that don't model production constraints
+* successful startup masking broken gameplay
 
-For every major feature, ask:
+For every major feature ask:
 
-> If this code were removed, would the advertised feature actually stop working?
+```text
+If this code were deleted, would the advertised feature actually stop working?
+```
 
-If the answer is no, investigate whether the code is:
+If NO:
 
-* dead
-* redundant
-* stale
-* bypassed
-* incorrectly tested
+```text
+DEAD / REDUNDANT / STALE / BYPASSED / INCORRECTLY TESTED
+```
+
+investigate further.
 
 ---
 
-# PHASE 6 — ARCHITECTURE AUDIT
+# 12. PHASE 8 — RUNTIME REACHABILITY AUDIT
 
-Evaluate the repository against its intended architecture.
+For every major class, factory, adapter, analyzer, bridge, registry, and runtime plan:
 
-Identify:
-
-* competing architectural paradigms
-* duplicated discovery
-* duplicated parsing
-* duplicated compatibility reasoning
-* multiple caches representing the same information
-* multiple sources of truth
-* compatibility decisions occurring in hot paths
-* metadata directly controlling behavior without compilation
-* analysis code coupled to runtime execution
-* resource conversion coupled to mod-specific behavior
-* generic bridges bypassed by special-case logic
-* mod-specific logic appearing before generic abstraction is exhausted
-
-Specifically detect:
+Determine:
 
 ```text
-HIDDEN MONOLITH
-FRAGILE ABSTRACTION
-LEAKED ABSTRACTION
-PARALLEL ARCHITECTURE
-STALE ARCHITECTURE
-UNCOMPILED RUNTIME REASONING
-DUPLICATED DISCOVERY
-DUPLICATED CACHING
-DUPLICATED COMPATIBILITY LOGIC
+DEFINED?
+REGISTERED?
+DISCOVERED?
+SELECTED?
+INSTANTIATED?
+EXECUTED?
+RESULT USED?
 ```
 
-For every architectural problem, identify:
+A component that is:
 
 ```text
-CURRENT PATH
-INTENDED PATH
-WHY THEY DIVERGE
-MIGRATION REQUIRED
-FILES AFFECTED
-REGRESSION RISK
+DEFINED = YES
+REGISTERED = YES
+SELECTED = NO
+```
+
+is NOT operational.
+
+A component that is:
+
+```text
+EXECUTED = YES
+RESULT USED = NO
+```
+
+is NOT functional.
+
+A component that is:
+
+```text
+RESULT USED = YES
+CLIENT OBSERVATION = NO
+```
+
+is NOT end-to-end verified.
+
+---
+
+# 13. PHASE 9 — FALLBACK / DEGRADATION AUDIT
+
+Explicitly map every fallback.
+
+For each:
+
+```text
+PRIMARY IMPLEMENTATION:
+FALLBACK:
+TRIGGER:
+IS FAILURE EXPLICIT:
+IS FAILURE LOGGED:
+IS FAILURE REPORTED:
+IS FALLBACK SEMANTICALLY EQUIVALENT:
+DOES FALLBACK HIDE FAILURE:
+DOES FALLBACK REDUCE CAPABILITY:
+```
+
+Search for cases where:
+
+```text
+unsupported behavior
+        ↓
+fallback
+        ↓
+success-looking result
+```
+
+A successful fallback MUST NOT be counted as full feature support unless it preserves the intended semantics.
+
+Classify:
+
+```text
+SEMANTICALLY EQUIVALENT
+APPROXIMATION
+VISUAL-ONLY
+DEGRADED
+UNSUPPORTED
+MISLEADING
 ```
 
 ---
 
-# PHASE 7 — RUNTIME, FAILURE, AND ADVERSARIAL ANALYSIS
+# 14. PHASE 10 — RUNTIME FAILURE / ADVERSARIAL ANALYSIS
 
-Analyze realistic failure scenarios.
+Analyze realistic failures grounded in actual code.
 
-Investigate:
+Inspect:
 
 * null handling
 * invalid identifiers
 * missing resources
 * malformed metadata
-* incompatible mod versions
-* partial cache corruption
-* stale cache entries
+* incompatible versions
+* cache corruption
+* stale caches
 * dependency changes
-* duplicate registrations
+* duplicate registration
 * startup ordering
 * concurrent access
 * shutdown races
 * resource leaks
-* unbounded caches
-* memory retention
-* repeated full scans
+* unbounded memory
+* repeated scans
 * repeated parsing
+* partial transactions
 * exception swallowing
-* fallback paths that silently degrade correctness
+* fallback masking
+* synchronization failures
+* client disconnects
+* server restart
+* world reload
+* mod reload
+* pack regeneration
 
-For each important runtime subsystem, ask:
+For each scenario:
 
 ```text
-What happens if the input is missing?
-What happens if the input is malformed?
-What happens if the dependency changes?
-What happens if the cache is stale?
-What happens if initialization order changes?
-What happens if the runtime object disappears?
-What happens if synchronization fails halfway?
-What happens if one resource transaction succeeds and another fails?
-What happens after restart?
+TRIGGER:
+CODE PATH:
+EXPECTED BEHAVIOR:
+ACTUAL BEHAVIOR:
+FAILURE VISIBILITY:
+DATA LOSS RISK:
+STATE CORRUPTION RISK:
+CLIENT IMPACT:
+RECOVERY:
+TEST COVERAGE:
 ```
 
-Do not invent failure scenarios without connecting them to actual code.
-
-Every scenario must identify the relevant implementation path.
+Do not invent failure scenarios disconnected from implementation.
 
 ---
 
-# PHASE 8 — PERFORMANCE AND RESOURCE AUDIT
+# 15. PHASE 11 — TRANSACTION / STATE CONSISTENCY AUDIT
+
+For systems involving:
+
+* item transfer
+* fluid transfer
+* energy transfer
+* machine processing
+* inventory mutation
+* automation
+* menus
+* block entities
+
+verify transactional correctness.
+
+Ask:
+
+```text
+What is authoritative?
+
+Can insertion partially succeed?
+
+Can extraction partially succeed?
+
+Can source mutate without destination mutation?
+
+Can destination mutate without source mutation?
+
+Can processing consume input but fail to produce output?
+
+Can synchronization fail after mutation?
+
+Can the client display stale state?
+
+Can the client perform an action against stale state?
+
+Does rollback exist?
+
+Does restart preserve state?
+
+Does cache state match runtime state?
+```
+
+Look specifically for:
+
+```text
+TOCTOU
+PARTIAL COMMIT
+DUPLICATION
+ITEM LOSS
+FLUID LOSS
+ENERGY LOSS
+DESYNC
+DUPLICATE ACTION
+REPLAY
+STALE STATE
+```
+
+---
+
+# 16. PHASE 12 — PERFORMANCE / RESOURCE AUDIT
 
 Identify:
 
 * repeated filesystem traversal
-* repeated archive traversal
+* archive traversal
 * full-tree hashing
 * eager parsing
 * duplicate parsing
 * unbounded caches
-* unnecessary object retention
+* excessive object retention
 * repeated serialization
 * repeated deserialization
 * repeated compatibility analysis
 * hot-path reflection
 * hot-path metadata parsing
-* unnecessary resource extraction
-* quadratic or worse algorithms
+* unnecessary extraction
+* quadratic algorithms
+* synchronization storms
 
-For every performance finding, identify:
+For each:
 
 ```text
 OPERATION:
 CALL PATH:
 FREQUENCY:
 INPUT SCALE:
-CURRENT COMPLEXITY:
-MEMORY IMPACT:
-CACHE BEHAVIOR:
+TIME COMPLEXITY:
+MEMORY COMPLEXITY:
+CACHE:
+MEASUREMENT:
 EVIDENCE:
-MEASUREMENT AVAILABLE:
 ```
-
-Do not call something a bottleneck without evidence.
 
 Classify:
 
@@ -613,53 +1076,302 @@ Classify:
 MEASURED BOTTLENECK
 HIGH-CONFIDENCE SCALING RISK
 POSSIBLE OPTIMIZATION
-NOT A MEANINGFUL ISSUE
+NOT MEANINGFUL
 ```
+
+Never claim a bottleneck solely from intuition.
 
 ---
 
-# PHASE 9 — CONFIGURATION AND ENVIRONMENT VALIDATION
+# 17. PHASE 13 — CONFIGURATION / ENVIRONMENT AUDIT
 
-Trace every configuration value from:
+Trace every configuration value:
 
 ```text
 DEFINITION
  ↓
-LOADING
+LOAD
+ ↓
+PARSE
  ↓
 VALIDATION
+ ↓
+TRANSFORMATION
  ↓
 CONSUMPTION
 ```
 
-Detect:
+Find:
 
-* unused configuration
-* undocumented configuration
-* configuration with no validation
-* unsafe defaults
-* environment-specific behavior
-* conflicting values
-* duplicate configuration systems
+* unused settings
+* undocumented settings
+* invalid defaults
+* conflicting configuration
 * dead feature flags
-* configuration that claims behavior not implemented
+* environment-sensitive behavior
+* OS-specific behavior
+* Java version mismatches
+* toolchain mismatches
+* runtime launch differences
+* test-only configuration
+* configuration that claims unsupported functionality
 
-Also inspect:
+Verify:
 
-* build configuration
-* dependency versions
-* Java/toolchain versions
-* runtime launch configuration
-* test configuration
-* generated resource configuration
+```text
+Java version
+Gradle version
+mod-loader version
+Minecraft version
+Geyser version
+Bedrock assumptions
+Node/npm version
+TypeScript version
+build environment
+runtime environment
+```
 
 ---
 
-# PHASE 10 — DOCUMENTATION VS REALITY
+# 18. PHASE 14 — BEDROCK / GEYSER INTEROPERABILITY AUDIT
 
-Compare every major documented claim against implementation.
+This phase is mandatory for any system claiming Bedrock compatibility.
 
-For each claim classify:
+Separate:
+
+```text
+JAVA SERVER SUPPORT
+GEYSER SUPPORT
+PACK DELIVERY
+BEDROCK REGISTRATION
+BEDROCK RENDERING
+BEDROCK INTERACTION
+JAVA MUTATION
+STATE SYNCHRONIZATION
+CLIENT OBSERVATION
+```
+
+Do NOT treat them as one capability.
+
+Investigate:
+
+### Resource delivery
+
+```text
+Java server
+→ Geyser
+→ Bedrock resource pack
+→ Bedrock client
+```
+
+### Behavior delivery
+
+Determine exactly what can and cannot be executed remotely.
+
+Explicitly distinguish:
+
+```text
+resource pack
+behavior pack
+Script API
+server-side JavaScript
+client-side JavaScript
+Geyser extension
+Java server execution
+Bedrock client execution
+```
+
+### Interaction
+
+Trace:
+
+```text
+Bedrock input
+→ Geyser translation
+→ Java event
+→ authoritative mutation
+→ state update
+→ synchronization
+→ Bedrock observation
+```
+
+If physical Bedrock testing is unavailable, mark the final stage:
+
+```text
+UNVERIFIED — CLIENT OBSERVATION UNAVAILABLE
+```
+
+Do not substitute server tests.
+
+---
+
+# 19. PHASE 15 — TEST AUDIT
+
+For every important test:
+
+Identify:
+
+```text
+TEST:
+PRODUCTION CODE EXERCISED:
+MOCKS:
+STUBS:
+Fakes:
+Fixtures:
+REAL REGISTRIES:
+REAL RESOURCES:
+REAL RUNTIME:
+REAL NETWORK:
+CLIENT:
+```
+
+Determine whether the test can pass while the production feature is broken.
+
+Search for:
+
+* tests testing only getters
+* tests testing only object construction
+* tests testing only reports
+* tests testing test fixtures
+* mocks replacing critical production systems
+* fake registries
+* fake resource loaders
+* fake network transport
+* fake Bedrock state
+* assertions that verify only "no exception"
+* tests that don't assert authoritative mutation
+* tests that don't assert synchronization
+* tests that don't assert output state
+
+Also require negative tests for:
+
+* missing resources
+* invalid metadata
+* invalid identifiers
+* unsupported capability
+* stale cache
+* cache invalidation
+* partial failure
+* duplicate registration
+* failed synchronization
+* incompatible versions
+
+---
+
+# 20. PHASE 16 — SECOND INDEPENDENT ADVERSARIAL PASS
+
+Repeat the audit independently.
+
+Do NOT simply reread Pass 1.
+
+Pass 2 must actively attempt to disprove Pass 1.
+
+Assume Pass 1 missed:
+
+* false-positive tests
+* unreachable code
+* hidden fallback
+* stale architecture
+* duplicate systems
+* broken registration
+* broken synchronization
+* cache invalidation defects
+* documentation drift
+* fake runtime paths
+* test fixtures too simple to represent production
+* capabilities that work only for specially constructed fixtures
+
+For every major Pass 1 conclusion:
+
+```text
+PASS 1 CLAIM:
+
+PASS 1 EVIDENCE:
+
+PASS 2 ATTACK:
+
+COUNTER-EVIDENCE:
+
+RESULT:
+CONFIRMED
+REVISED
+REJECTED
+UNRESOLVED
+```
+
+Pass 2 MUST search specifically for contradictions between:
+
+```text
+documentation ↔ implementation
+tests ↔ implementation
+tests ↔ runtime
+metadata ↔ compiled plan
+compiled plan ↔ dispatch
+dispatch ↔ mutation
+mutation ↔ persistence
+persistence ↔ synchronization
+synchronization ↔ transport
+transport ↔ client observation
+```
+
+---
+
+# 21. PHASE 17 — AUDIT-THE-AUDITOR
+
+If a previous audit/report exists, independently verify its conclusions.
+
+For every major previous claim:
+
+```text
+PREVIOUS CLAIM:
+
+SOURCE:
+
+CURRENT CODE:
+
+CURRENT TEST:
+
+CURRENT RUNTIME EVIDENCE:
+
+CONFIRMED:
+REVISED:
+REJECTED:
+UNVERIFIABLE:
+```
+
+Specifically challenge:
+
+* file counts
+* coverage claims
+* issue counts
+* health scores
+* "all tests pass"
+* "fully implemented"
+* "end-to-end"
+* "runtime verified"
+* "supported"
+* "automatic"
+* "universal"
+* "production ready"
+
+A previous audit is **evidence to investigate**, not authority.
+
+---
+
+# 22. PHASE 18 — DOCUMENTATION VS REALITY
+
+For every major documented claim:
+
+```text
+DOCUMENTED CLAIM:
+SOURCE:
+IMPLEMENTATION:
+RUNTIME EVIDENCE:
+CLIENT EVIDENCE:
+STATUS:
+```
+
+Use:
 
 ```text
 VERIFIED
@@ -670,7 +1382,7 @@ FALSE
 UNVERIFIABLE
 ```
 
-Pay special attention to words such as:
+Treat these words as requiring especially strong evidence:
 
 ```text
 supports
@@ -686,93 +1398,76 @@ end-to-end
 production-ready
 ```
 
-These claims require stronger evidence than ordinary documentation.
-
-A generated compatibility report is NOT proof of actual compatibility.
-
-A successful build is NOT proof of runtime behavior.
-
-A successful server startup is NOT proof of client synchronization.
-
-A transport handoff is NOT proof that a Bedrock client observed the intended state.
-
----
-
-# PHASE 11 — TEST AND VALIDATION AUDIT
-
-Analyze the tests themselves.
-
-For every important subsystem:
-
-1. Identify what production code is exercised.
-2. Identify what is mocked.
-3. Identify what is simulated.
-4. Identify what is never tested.
-5. Identify tests that can pass while production behavior is broken.
-6. Identify integration tests that bypass real runtime wiring.
-7. Identify missing negative tests.
-8. Identify missing restart/cache invalidation tests.
-9. Identify missing failure propagation tests.
-
-Classify evidence strength:
+Mandatory rules:
 
 ```text
-STATIC ONLY
-UNIT VERIFIED
-INTEGRATION VERIFIED
-LIVE RUNTIME VERIFIED
-END-TO-END VERIFIED
-CLIENT-OBSERVED VERIFIED
-```
+Build success ≠ feature success
 
-Do not upgrade evidence strength without an actual corresponding test or runtime artifact.
+Test success ≠ runtime success
+
+Server startup ≠ gameplay success
+
+Resource conversion ≠ gameplay compatibility
+
+Generated JSON ≠ working Bedrock behavior
+
+Packet creation ≠ client observation
+
+Scoreboard registration ≠ complete bridge behavior
+
+Analyzer detection ≠ runtime support
+
+Runtime plan ≠ runtime execution
+
+Runtime execution ≠ correct mutation
+
+Correct mutation ≠ synchronization
+
+Synchronization ≠ client observation
+```
 
 ---
 
-# PHASE 12 — SECOND INDEPENDENT PASS
+# 23. PHASE 19 — STALE ARCHITECTURE AUDIT
 
-Repeat the audit from a different perspective.
+Identify:
 
-The second pass must NOT simply reread the first findings.
+* old architecture still active
+* old abstractions
+* duplicate discovery
+* duplicate parsing
+* duplicate caches
+* duplicate compatibility reasoning
+* transitional code
+* partially completed migrations
+* dead registries
+* old factories
+* legacy metadata
+* compatibility logic in hot paths
+* mod-specific logic that should be generic
+* generic logic bypassed by special cases
 
-Use an adversarial approach.
-
-Assume the first pass missed:
-
-* unreachable code
-* false-positive tests
-* stale architecture
-* hidden fallback paths
-* duplicate implementations
-* broken registration
-* missing synchronization
-* incorrect cache invalidation
-* documentation drift
-* functionality that exists only in reports
-
-For each first-pass conclusion:
+For each:
 
 ```text
-PASS 1 CLAIM:
-EVIDENCE:
-PASS 2 CHALLENGE:
-RESULT:
-[CONFIRMED / REVISED / REJECTED]
+CURRENT PATH:
+
+INTENDED PATH:
+
+WHY THEY DIVERGE:
+
+ACTIVE REFERENCES:
+
+MIGRATION REQUIRED:
+
+FILES:
+
+REGRESSION RISK:
 ```
-
-Search specifically for contradictions between:
-
-* implementation and documentation
-* tests and runtime
-* metadata and runtime plans
-* runtime plans and runtime dispatch
-* runtime dispatch and actual mutation
-* mutation and synchronization
-* synchronization and client-observable state
 
 ---
 
-# PHASE 13 — COMPLETENESS AND STALE-CODE SWEEP
+# 24. PHASE 20 — COMPLETENESS / STALE-CODE SWEEP
 
 Perform a final repository-wide search for:
 
@@ -799,16 +1494,17 @@ Also search for:
 
 * empty implementations
 * no-op implementations
-* interfaces with only one meaningful implementation
-* factories that always select fallback
+* factories always choosing fallback
 * registries with unused entries
 * analyzers whose findings are never consumed
-* runtime plans that are never dispatched
-* adapters that cannot be selected
+* runtime plans never dispatched
+* adapters never selected
 * configuration never read
-* reports disconnected from behavior
+* reports disconnected from runtime
+* tests disconnected from production
+* generated output disconnected from source
 
-Every occurrence must be classified as:
+Every occurrence:
 
 ```text
 INTENTIONAL
@@ -817,57 +1513,174 @@ SUSPICIOUS
 CONFIRMED ISSUE
 ```
 
-No occurrence may be silently ignored.
+Nothing may be silently ignored.
 
 ---
 
-# PHASE 14 — ARCHITECTURAL COMPLETION ASSESSMENT
+# 25. PHASE 21 — ARCHITECTURAL COMPLETION ASSESSMENT
 
-Assess the project against its actual intended architecture.
+Evaluate each major architectural layer.
 
-Do not measure completion by:
-
-* number of classes
-* number of commits
-* number of tests
-* number of reports
-* number of supported mods
-
-Measure completion by architectural capability.
-
-For each required architectural layer:
+Use:
 
 ```text
 LAYER:
+
 INTENDED RESPONSIBILITY:
 
-IMPLEMENTATION STATUS:
-[NOT STARTED / SCAFFOLDING / PARTIAL / FUNCTIONAL / VERIFIED / COMPLETE]
+IMPLEMENTATION:
 
-EVIDENCE:
+REACHABILITY:
+
+CONTRACT:
+
+FAILURE HANDLING:
+
+TESTING:
+
+RUNTIME EVIDENCE:
+
+CLIENT EVIDENCE:
+
+STATUS:
+NOT STARTED
+SCAFFOLDING
+PARTIAL
+FUNCTIONAL
+SERVER-VERIFIED
+TRANSPORT-VERIFIED
+CLIENT-OBSERVED
+COMPLETE
 
 MISSING CAPABILITIES:
 
 BLOCKERS:
 
-DEPENDENCIES:
-
 FALSE-COMPLETION RISKS:
 ```
 
-A subsystem is only considered **COMPLETE** if:
+A subsystem is COMPLETE only if:
 
-1. its intended responsibility exists
-2. its production path is reachable
-3. its contracts are satisfied
+1. intended responsibility exists
+2. production path is reachable
+3. contracts are satisfied
 4. failure behavior is defined
-5. relevant tests exist
-6. no critical known gap remains hidden behind fallback behavior
-7. evidence supports its claimed completion level
+5. tests exercise meaningful behavior
+6. no critical gap is hidden by fallback
+7. runtime evidence supports the claim
+8. required synchronization works
+9. required client behavior is verified when applicable
+10. documentation accurately describes its limitations
 
 ---
 
-# 📊 REQUIRED ISSUE FORMAT
+# 26. PHASE 22 — MISSION CAPABILITY SCORE
+
+This is mandatory.
+
+Do NOT use a single health percentage to represent the whole project.
+
+Produce at least:
+
+```text
+ENGINEERING HEALTH SCORE:
+ARCHITECTURAL COMPLETENESS:
+IMPLEMENTATION COMPLETENESS:
+RUNTIME COMPLETENESS:
+END-TO-END VERIFICATION:
+MISSION CAPABILITY:
+RELEASE READINESS:
+```
+
+The **MISSION CAPABILITY SCORE** must be based on actual product functionality.
+
+For a compatibility project, heavily weight:
+
+```text
+real behavior support
+real interaction
+authoritative mutation
+synchronization
+transport
+client observation
+automatic discovery
+generic compatibility
+failure correctness
+```
+
+Do NOT inflate the mission score because:
+
+* many classes exist
+* many tests pass
+* many reports exist
+* many adapters exist
+* code coverage is high
+* resource conversion works
+* the server starts successfully
+
+A system with excellent infrastructure but incomplete gameplay capability MUST receive a correspondingly lower mission score.
+
+---
+
+# 27. REQUIRED CAPABILITY MATRIX
+
+Produce a final matrix similar to:
+
+| Capability         | Discovery | IR | Compile | Dispatch | Mutation | Persistence | Sync | Transport | Client | Overall |   |
+| ------------------ | --------- | -- | ------- | -------- | -------- | ----------- | ---- | --------- | ------ | ------- | - |
+| Item inventory     |           |    |         |          |          |             |      |           |        |         |   |
+| Item insertion     |           |    |         |          |          |             |      |           |        |         |   |
+| Item extraction    |           |    |         |          |          |             |      |           |        |         |   |
+| Fluid storage      |           |    |         |          |          |             |      |           |        |         |   |
+| Fluid insertion    |           |    |         |          |          |             |      |           |        |         |   |
+| Fluid extraction   |           |    |         |          |          |             |      |           |        |         |   |
+| Energy             |           |    |         |          |          |             |      |           |        |         |   |
+| Machine processing |           |    |         |          |          |             |      |           |        |         |   |
+| Automation         |           |    |         |          |          |             |      |           |        |         |   |
+| Block entities     |           |    |         |          |          |             |      |           |        |         |   |
+| Menus              |           |    |         |          |          |             |      |           |        |         |   |
+| Entity interaction |           |    |         |          |          |             |      |           |        |         |   |
+| Entity behavior    |           |    |         |          |          |             |      |           |        |         |   |
+| Networking         |           |    |         |          |          |             |      |           |        |         |   |
+| Rendering          |           |    |         |          |          |             |      |           |        |         |   |
+| Recipes            |           |    |         |          |          |             |      |           |        |         |   |
+
+Every cell requires evidence.
+
+---
+
+# 28. "LOOKS COMPLETE BUT ISN'T"
+
+Explicitly identify systems where:
+
+* analysis exists but execution doesn't
+* execution exists but selection doesn't
+* selection exists but dispatch doesn't
+* dispatch exists but mutation doesn't
+* mutation exists but persistence doesn't
+* persistence exists but synchronization doesn't
+* synchronization exists but transport doesn't
+* transport exists but client observation is missing
+* metadata exists but behavior doesn't
+* tests exist but production wiring isn't exercised
+* fixtures exist but arbitrary real mod behavior isn't handled
+* fallback produces success-looking output
+* reports claim more than runtime proves
+
+For each:
+
+```text
+SYSTEM:
+WHAT LOOKS COMPLETE:
+WHAT IS ACTUALLY COMPLETE:
+WHAT IS MISSING:
+EVIDENCE:
+REQUIRED WORK:
+```
+
+---
+
+# 29. REQUIRED ISSUE FORMAT
 
 For every confirmed issue:
 
@@ -875,17 +1688,19 @@ For every confirmed issue:
 
 **Severity:** CRITICAL / HIGH / MEDIUM / LOW
 
-**Type:** Syntax / Functional / Architectural / Runtime / Performance / Config / Docs / Test / Completeness
+**Type:** Syntax / Functional / Architectural / Runtime / Performance / Config / Docs / Test / Completeness / Security
 
 **Confidence:** VERIFIED / HIGH / MEDIUM
 
 **Pass Found:** PASS 1 / PASS 2 / BOTH
 
+**Evidence Level:** E0–E6
+
 **Files:**
 
 ```text
-path/to/file
-path/to/related/file
+path
+path
 ```
 
 **Code Evidence:**
@@ -893,58 +1708,67 @@ path/to/related/file
 ```text
 File:
 Symbol:
-Line or exact code reference:
+Line:
+Exact relevant code:
 ```
 
 **Execution Path:**
 
 ```text
-entry point
+entry
 → registration
+→ discovery
 → analysis
-→ runtime
+→ compilation
+→ dispatch
 → mutation
+→ persistence
 → synchronization
+→ transport
 → observable result
 ```
 
 **What Is Actually Happening:**
 
-Explain only what can be supported by evidence.
+Only state what evidence supports.
 
 **Why This Is Wrong:**
 
-Explain the violated contract or intent.
+Identify the violated contract or intended behavior.
 
 **System-Wide Impact:**
 
-Identify affected subsystems.
+Identify affected systems.
 
 **Failure Scenario:**
 
-Provide a realistic failure case grounded in the implementation.
+Ground it in the real implementation.
+
+**Why Existing Tests Do Not Prevent It:**
+
+This field is mandatory for functional/runtime issues.
 
 **Exact Fix:**
-
-Provide a concrete implementation direction.
 
 Include:
 
 * affected abstractions
-* files likely requiring modification
-* required contract changes
-* migration strategy
-* regression tests required
+* files
+* contract changes
+* migration
+* implementation steps
+* regression tests
+* runtime validation
 
 **Verification Required:**
 
-Define exactly what must be proven before closing the issue.
+State exactly what must be proven before closure.
 
 ---
 
-# 🧾 REQUIRED COVERAGE REPORT
+# 30. REQUIRED COVERAGE REPORT
 
-The final audit must include:
+Final report MUST contain:
 
 ```text
 TOTAL FILES DETECTED:
@@ -953,63 +1777,85 @@ TOTAL FILES ANALYZED — PASS 1:
 TOTAL FILES ANALYZED — PASS 2:
 
 FILES EXCLUDED FROM DEEP SEMANTIC ANALYSIS:
-<count>
+COUNT:
 
 EXCLUSION JUSTIFICATIONS:
-<list>
 
-MISSED FILES:
-0 REQUIRED
+FILES WITH PARTIAL ANALYSIS:
+COUNT:
 
 UNRESOLVED FILES:
-<count>
+COUNT:
+
+MISSED FILES:
+COUNT:
 
 COVERAGE:
-100% REQUIRED
 ```
 
-The inventory must reconcile exactly with the analysis counts.
-
-If:
+Required:
 
 ```text
-detected != analyzed + explicitly excluded
+MISSED FILES = 0
 ```
 
-then the audit is incomplete.
+unless a concrete technical limitation prevents it.
+
+Reconcile:
+
+```text
+DETECTED = ANALYZED + EXCLUDED
+```
+
+If this does not reconcile exactly, the audit is incomplete.
 
 ---
 
-# 💥 REQUIRED FINAL REPORT
+# 31. REQUIRED FINAL REPORT
 
-## 1. System Health Score
+## 1. Executive Summary
 
-Score from 0–100.
+State:
 
-The score must be derived from evidence, not intuition.
+```text
+ACTUAL PRODUCT MISSION:
 
-Show the scoring factors.
+CURRENT REALITY:
+
+BIGGEST STRENGTH:
+
+BIGGEST WEAKNESS:
+
+MOST DANGEROUS FALSE-COMPLETION RISK:
+
+MOST IMPORTANT NEXT MILESTONE:
+```
 
 ---
 
-## 2. Completion Assessment
+## 2. Separate Health Scores
 
-Separate:
+Provide:
 
 ```text
-ARCHITECTURAL COMPLETENESS
-IMPLEMENTATION COMPLETENESS
-RUNTIME COMPLETENESS
-END-TO-END VERIFICATION
+ENGINEERING HEALTH:
+ARCHITECTURAL COMPLETENESS:
+IMPLEMENTATION COMPLETENESS:
+RUNTIME COMPLETENESS:
+END-TO-END VERIFICATION:
+MISSION CAPABILITY:
+RELEASE READINESS:
 ```
 
-Do not combine these into one misleading percentage.
+Explain scoring.
+
+Do not fabricate mathematical precision.
 
 ---
 
 ## 3. Top 10 Risks
 
-Rank by:
+Rank using:
 
 ```text
 Severity
@@ -1018,7 +1864,9 @@ Blast Radius
 ×
 Likelihood
 ×
-Difficulty of Detection
+Detection Difficulty
+×
+Mission Impact
 ```
 
 ---
@@ -1032,59 +1880,101 @@ Subsystem:
 Why fragile:
 Evidence:
 Failure trigger:
+Blast radius:
 Recommended stabilization:
 ```
 
 ---
 
-## 5. "Looks Complete but Isn't" List
+## 5. Looks Complete but Isn't
 
-Explicitly identify systems where:
-
-* analysis exists but execution does not
-* execution exists but selection does not
-* mutation exists but synchronization does not
-* synchronization exists but client observation is unverified
-* metadata exists but runtime behavior does not
-* tests exist but real wiring is not exercised
+Provide the complete list.
 
 ---
 
 ## 6. Stale Architecture
 
-Identify:
+Provide:
 
-* old paths still active
-* old abstractions still referenced
-* duplicate systems
-* transitional code that never completed migration
-* compatibility logic that should have been compiled
-* discovery that should have been unified
+```text
+OLD PATH:
+CURRENT PATH:
+CONFLICT:
+MIGRATION:
+```
 
 ---
 
 ## 7. Highest Technical Debt
-
-Rank the top architectural debt items.
 
 For each:
 
 ```text
 Debt:
 Why it exists:
-Files involved:
-Cost of leaving it:
-Cost of fixing it:
+Files:
+Cost of leaving:
+Cost of fixing:
 Recommended timing:
 ```
 
 ---
 
-# 🛠️ REQUIRED REMEDIATION PLAN
+## 8. Capability Matrix
 
-After the audit, create a concrete implementation plan.
+Include the complete capability matrix from Phase 27.
 
-Every issue must map to one of:
+---
+
+## 9. Documentation vs Reality
+
+Provide the major claims and their actual status.
+
+---
+
+## 10. Test Confidence
+
+Explain what passing tests genuinely prove and what they do NOT prove.
+
+---
+
+## 11. Runtime Confidence
+
+Explain exactly what has been proven at:
+
+```text
+E1
+E2
+E3
+E4
+E5
+E6
+```
+
+---
+
+## 12. Audit Integrity
+
+Report:
+
+```text
+Previous audit claims verified:
+Previous audit claims revised:
+Previous audit claims rejected:
+Unverifiable previous claims:
+
+Pass 1 findings:
+Pass 2 findings:
+Cross-pass confirmed:
+Cross-pass rejected:
+Cross-pass unresolved:
+```
+
+---
+
+# 32. REQUIRED REMEDIATION PLAN
+
+Every confirmed issue MUST map to one:
 
 ```text
 FIX IMMEDIATELY
@@ -1095,7 +1985,7 @@ DOCUMENTATION CORRECTION
 ACCEPTED LIMITATION
 ```
 
-Order the implementation plan by dependency, not merely severity.
+Order work by **dependency and architectural leverage**, not simply severity.
 
 Use:
 
@@ -1104,113 +1994,310 @@ PHASE <N>
 
 OBJECTIVE:
 
+WHY THIS PHASE COMES NOW:
+
 ISSUES RESOLVED:
 
-FILES / SUBSYSTEMS AFFECTED:
+CAPABILITIES ENABLED:
+
+FILES / SUBSYSTEMS:
 
 IMPLEMENTATION STEPS:
 
 ARCHITECTURAL CONTRACT:
 
+DATA FLOW:
+
+RUNTIME PATH:
+
 TESTS REQUIRED:
 
-RUNTIME VALIDATION REQUIRED:
+NEGATIVE TESTS:
+
+RUNTIME VALIDATION:
+
+CLIENT VALIDATION:
+
+MIGRATION / COMPATIBILITY:
 
 EXIT CRITERIA:
+
+PROOF REQUIRED BEFORE CLOSURE:
 ```
 
-Do not create a plan containing vague tasks such as:
+Never use vague tasks such as:
 
 ```text
 improve architecture
-fix caching
+improve caching
 improve performance
 add better tests
 support more mods
+fix compatibility
 ```
 
-Every task must identify what changes.
+Every task must identify the actual implementation change required.
 
 ---
 
-# 🚫 PROHIBITED AUDIT BEHAVIOR
+# 33. REQUIRED PHASE-GATE RULES
 
-You must NOT:
+A phase cannot be marked complete merely because code was written.
 
-* stop after compilation succeeds
-* trust passing tests without inspecting what they exercise
-* trust reports as proof of runtime behavior
-* treat a class existing as feature completion
-* treat metadata support as behavioral support
-* treat visual conversion as gameplay compatibility
-* treat server startup as end-to-end validation
-* treat packet creation as client-observed synchronization
+Each phase requires:
+
+```text
+SOURCE IMPLEMENTATION
++
+REACHABLE PRODUCTION PATH
++
+TEST COVERAGE
++
+NEGATIVE TESTING
++
+RUNTIME EVIDENCE
++
+DOCUMENTATION ACCURACY
+```
+
+For client-facing functionality additionally require:
+
+```text
+TRANSPORT EVIDENCE
++
+CLIENT OBSERVATION
+```
+
+when such testing is technically possible.
+
+---
+
+# 34. PROHIBITED AUDIT BEHAVIOR
+
+You MUST NOT:
+
+* stop after compilation
+* stop after tests pass
+* trust reports
+* trust previous audits
+* trust README claims
+* trust architecture diagrams
+* count classes as capabilities
+* count interfaces as capabilities
+* count analyzers as capabilities
+* count metadata as capabilities
+* count runtime plans as capabilities
+* count generated JSON as functionality
+* count server startup as gameplay success
+* count packet creation as synchronization success
+* count transport as client observation
+* count visual conversion as behavioral support
+* count fallback as full implementation
 * ignore unreachable code
 * ignore generated code without classification
-* skip large files because they are difficult
-* skip tests because they are "only tests"
-* recommend generic refactoring without identifying the exact problem
-* hide uncertainty behind confident language
-* declare success while known architectural gaps remain
+* skip large files
+* skip test code
+* skip scripts
+* skip configuration
+* skip resources
+* skip archives without justification
+* use generic refactoring recommendations
+* hide uncertainty
+* invent evidence
+* infer client behavior from server behavior
+* infer arbitrary mod support from one fixture
+* infer universal behavior from one mod adapter
+* declare completion while critical gaps remain
 
 ---
 
-# FINAL OPERATING PRINCIPLE
+# 35. FINAL OPERATING PRINCIPLE
 
-The purpose of this audit is not to prove that the system works.
+The purpose of this audit is to **actively attempt to prove that the system is broken**.
 
-The purpose is to actively attempt to prove that the system is broken.
-
-For every major feature, repeatedly ask:
+For every major capability ask:
 
 ```text
 What evidence proves this works?
 
-What evidence could prove this does NOT work?
+What evidence could prove it does not work?
 
 Is the implementation actually reachable?
 
-Does the real runtime use this code?
+Is the production implementation being exercised?
 
-Does the action cause authoritative mutation?
+Does the system discover the real behavior?
 
-Does the mutation persist?
+Does the compatibility compiler understand the behavior?
 
-Does the mutation synchronize?
+Does the runtime select the implementation?
 
-Is the result observable by the intended client?
+Does dispatch actually execute?
+
+Does execution cause authoritative mutation?
+
+Does mutation persist?
+
+Does synchronization occur?
+
+Does transport occur?
+
+Does the intended client observe the result?
+
+Can the client perform the intended action?
+
+Does that action produce authoritative Java mutation?
 
 Could tests still pass if the real feature were broken?
+
+Could fallback behavior make a broken feature look successful?
+
+Does this work for arbitrary real inputs or only a specially constructed fixture?
+
+Is the feature generic or dependent on a special-case adapter?
+
+Is the documentation accurately describing the limitation?
 ```
 
-Continue investigating until each question is answered with evidence or explicitly classified as unresolved.
-
-The audit is complete only when:
+Continue investigating until every question has:
 
 ```text
-100% FILE COVERAGE
+EVIDENCE
+```
+
+or:
+
+```text
+UNVERIFIED
+
+Evidence currently insufficient.
+
+Further investigation required:
+
+<exact investigation>
+```
+
+---
+
+# 36. AUDIT COMPLETION GATE
+
+The audit is complete ONLY when all of the following are satisfied:
+
+```text
+100% FILE INVENTORY
 +
-2 INDEPENDENT PASSES
+100% REQUIRED FILE COVERAGE
++
+2 INDEPENDENT ANALYSIS PASSES
 +
 CROSS-PASS RECONCILIATION
++
+AUDIT-THE-AUDITOR
 +
 SYSTEM-WIDE DEPENDENCY VALIDATION
 +
 FUNCTIONAL INTENT VERIFICATION
 +
-IMPLEMENTATION COMPLETENESS ANALYSIS
+IMPLEMENTATION COMPLETENESS
++
+RUNTIME REACHABILITY
++
+FALLBACK ANALYSIS
++
+STATE / TRANSACTION ANALYSIS
++
+PERFORMANCE ANALYSIS
++
+CONFIGURATION ANALYSIS
++
+BEDROCK / GEYSER ANALYSIS
++
+TEST VALIDITY ANALYSIS
 +
 STALE-CODE SWEEP
 +
-DOCS-TO-REALITY COMPARISON
+STALE-ARCHITECTURE AUDIT
++
+DOCUMENTATION-TO-REALITY AUDIT
++
+CAPABILITY MATRIX
++
+MISSION CAPABILITY SCORE
 +
 CONCRETE REMEDIATION PLAN
 ```
 
+The final report MUST clearly distinguish:
+
+```text
+WHAT EXISTS
+WHAT EXECUTES
+WHAT WORKS
+WHAT IS VERIFIED
+WHAT IS CLIENT-OBSERVED
+WHAT IS APPROXIMATED
+WHAT IS FALLBACK
+WHAT IS UNSUPPORTED
+WHAT IS UNKNOWN
+WHAT MUST BE BUILT NEXT
+```
+
 **Do not optimize for finding fewer issues.**
 
-**Do not optimize for a positive result.**
+**Do not optimize for a high score.**
 
-**Do not stop at superficial correctness.**
+**Do not optimize for a positive conclusion.**
 
-If the repository contains a weakness, contradiction, incomplete implementation, dead architecture, false completion claim, broken execution path, or functionally incorrect behavior, find it, prove it, and map the exact path required to fix it.
+**Do not declare victory because the architecture looks good.**
+
+**Do not declare victory because the tests pass.**
+
+**Do not declare victory because the server starts.**
+
+**Do not declare victory because Bedrock receives a pack.**
+
+**Do not declare victory because a bridge exists.**
+
+The audit succeeds only when it establishes, with evidence, the precise boundary between:
+
+```text
+IMPLEMENTED
+```
+
+```text
+FUNCTIONAL
+```
+
+```text
+RUNTIME-VERIFIED
+```
+
+```text
+CLIENT-OBSERVED
+```
+
+and:
+
+```text
+NOT YET REAL
+```
+
+If the repository contains a weakness, contradiction, incomplete implementation, dead architecture, false completion claim, broken execution path, misleading fallback, stale subsystem, synchronization failure, unsupported behavior, or functionally incorrect implementation:
+
+**FIND IT.**
+
+**PROVE IT.**
+
+**TRACE IT.**
+
+**EXPLAIN ITS BLAST RADIUS.**
+
+**IDENTIFY THE EXACT CODE PATH.**
+
+**DEFINE THE REQUIRED FIX.**
+
+**DEFINE THE TEST THAT PROVES THE FIX.**
+
+**DEFINE THE RUNTIME EVIDENCE REQUIRED TO CLOSE IT.**
+
+Then continue auditing until the entire defined scope has been exhausted.

@@ -11,7 +11,8 @@
     "ext.JavaOpenScreenTranslatorMixin",
     "ext.ItemTranslatorMixin",
     "ext.MinecraftResourcePackReaderImplMixin",
-    "ext.ModelSerializerMixin"
+    "ext.ModelSerializerMixin",
+    "ext.ServerPlayerGameModeMixin"
   ],
   "injectors": {
     "defaultRequire": 1
