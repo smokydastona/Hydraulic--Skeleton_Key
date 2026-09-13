@@ -1,5 +1,6 @@
 package org.geysermc.hydraulic.compat.runtime;
 
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,8 @@ public record BlockUseActionPlan(
     @NotNull Action action,
     int slot,
     int count,
-    @Nullable String side
+    @Nullable String side,
+    @Nullable ExtractAction extract
 ) {
     private static final int MAX_TRANSFER_COUNT = 64;
 
@@ -36,7 +38,7 @@ public record BlockUseActionPlan(
         if (slot == null || count == null || count > MAX_TRANSFER_COUNT) {
             return null;
         }
-        return new BlockUseActionPlan(action, slot, count, facts.get("interaction.block_use.side"));
+        return new BlockUseActionPlan(action, slot, count, facts.get("interaction.block_use.side"), ExtractAction.from(facts));
     }
 
     @Nullable
@@ -74,6 +76,50 @@ public record BlockUseActionPlan(
             try {
                 return valueOf(value.trim().toUpperCase(java.util.Locale.ROOT));
             } catch (IllegalArgumentException ignored) {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Optional shift-click-triggered counterpart to the primary insert action, declared by the
+     * same compiled block-use fact set. Extraction requires an explicit expected item identity
+     * because there is no held-item reference to derive it from; Hydraulic never guesses slot
+     * contents at runtime.
+     */
+    public record ExtractAction(int slot, @NotNull String itemId, int count, @Nullable String side) {
+        public ExtractAction {
+            if (slot < 0) {
+                throw new IllegalArgumentException("Block-use extract slot must not be negative");
+            }
+            itemId = itemId.trim();
+            if (itemId.isBlank()) {
+                throw new IllegalArgumentException("Block-use extract action requires an explicit item identifier");
+            }
+            try {
+                Identifier.parse(itemId);
+            } catch (RuntimeException exception) {
+                throw new IllegalArgumentException("Block-use extract action requires a valid item identifier", exception);
+            }
+            if (count <= 0 || count > MAX_TRANSFER_COUNT) {
+                throw new IllegalArgumentException("Block-use extract count must be between 1 and " + MAX_TRANSFER_COUNT);
+            }
+            if (side != null && side.isBlank()) {
+                side = null;
+            }
+        }
+
+        @Nullable
+        private static ExtractAction from(@NotNull Map<String, String> facts) {
+            Integer slot = nonNegativeInteger(facts.get("interaction.block_use.extract_slot"));
+            String itemId = facts.get("interaction.block_use.extract_item");
+            Integer count = positiveInteger(facts.getOrDefault("interaction.block_use.extract_count", "1"));
+            if (slot == null || itemId == null || itemId.isBlank() || count == null || count > MAX_TRANSFER_COUNT) {
+                return null;
+            }
+            try {
+                return new ExtractAction(slot, itemId, count, facts.get("interaction.block_use.extract_side"));
+            } catch (RuntimeException ignored) {
                 return null;
             }
         }

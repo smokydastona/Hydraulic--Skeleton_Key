@@ -4,6 +4,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
@@ -189,6 +190,11 @@ public final class BedrockRuntimeActionRouter {
         if (routed.status() != Status.TARGET_RESOLVED || routed.position() == null || routed.blockIdentifier() == null) {
             return routed;
         }
+
+        if (heldItemAccess.isSneaking() && action.extract() != null) {
+            return executeExtractAction(routed, discovery, action.extract(), heldItemAccess, dirtyStateTracker);
+        }
+
         TransferBridgeFactory.ItemStackView heldItem = heldItemAccess.heldItem();
         if (heldItem == null || heldItem.isEmpty() || heldItem.count() < action.count()) {
             return new RuntimeActionResult(routed.traceId(), Status.MUTATION_REJECTED, routed.position(), routed.blockIdentifier(), "Held item does not satisfy the compiled block-use action");
@@ -208,6 +214,45 @@ public final class BedrockRuntimeActionRouter {
         }
 
         heldItemAccess.consume(action.count());
+        return new RuntimeActionResult(routed.traceId(), Status.MUTATED, routed.position(), routed.blockIdentifier(), null);
+    }
+
+    /**
+     * Shift-click extraction counterpart to the primary insert action. The transferred count is
+     * always delivered back to the player (inventory add, or a world drop if the inventory is
+     * full) once the underlying transaction commits, so a resolved extraction never destroys the
+     * removed stack even if the player's inventory cannot hold it.
+     */
+    @NotNull
+    private static RuntimeActionResult executeExtractAction(
+        @NotNull RuntimeActionResult routed,
+        @NotNull RuntimeTargetDiscovery discovery,
+        @NotNull BlockUseActionPlan.ExtractAction extract,
+        @NotNull HeldItemAccess heldItemAccess,
+        @Nullable DirtyStateTracker dirtyStateTracker
+    ) {
+        TransferBridgeFactory.ItemStackView requested = new TransferBridgeFactory.ItemStackView(extract.itemId(), extract.count());
+        if (!heldItemAccess.canGive(requested)) {
+            return new RuntimeActionResult(routed.traceId(), Status.MUTATION_REJECTED, routed.position(), routed.blockIdentifier(), "Player cannot receive the extracted item");
+        }
+
+        TransferResult transfer = discovery.transferItem(
+            routed.position(),
+            TransferDirection.EXTRACT,
+            requested,
+            extract.slot(),
+            extract.side(),
+            dirtyStateTracker,
+            routed.traceId()
+        );
+        if (!transfer.committed() || transfer.moved() <= 0) {
+            return new RuntimeActionResult(routed.traceId(), Status.MUTATION_REJECTED, routed.position(), routed.blockIdentifier(), transfer.failureReason());
+        }
+
+        TransferBridgeFactory.ItemStackView delivered = new TransferBridgeFactory.ItemStackView(extract.itemId(), transfer.moved());
+        if (!heldItemAccess.give(delivered)) {
+            return new RuntimeActionResult(routed.traceId(), Status.MUTATION_REJECTED, routed.position(), routed.blockIdentifier(), "Extracted item could not be delivered to the player");
+        }
         return new RuntimeActionResult(routed.traceId(), Status.MUTATED, routed.position(), routed.blockIdentifier(), null);
     }
 
@@ -242,6 +287,18 @@ public final class BedrockRuntimeActionRouter {
         @Nullable TransferBridgeFactory.ItemStackView heldItem();
 
         void consume(int count);
+
+        default boolean isSneaking() {
+            return false;
+        }
+
+        default boolean canGive(@NotNull TransferBridgeFactory.ItemStackView item) {
+            return true;
+        }
+
+        default boolean give(@NotNull TransferBridgeFactory.ItemStackView item) {
+            return false;
+        }
     }
 
     private record PlayerHeldItemAccess(@NotNull ServerPlayer player) implements HeldItemAccess {
@@ -260,6 +317,39 @@ public final class BedrockRuntimeActionRouter {
                 this.player.getMainHandItem().shrink(count);
             }
             this.player.containerMenu.broadcastChanges();
+        }
+
+        @Override
+        public boolean isSneaking() {
+            return this.player.isShiftKeyDown();
+        }
+
+        @Override
+        public boolean canGive(@NotNull TransferBridgeFactory.ItemStackView item) {
+            if (item.isEmpty()) {
+                return false;
+            }
+            try {
+                Identifier identifier = Identifier.parse(item.itemId());
+                Item resolved = BuiltInRegistries.ITEM.getValue(identifier);
+                return BuiltInRegistries.ITEM.getKey(resolved).equals(identifier);
+            } catch (RuntimeException ignored) {
+                return false;
+            }
+        }
+
+        @Override
+        public boolean give(@NotNull TransferBridgeFactory.ItemStackView item) {
+            if (!canGive(item)) {
+                return false;
+            }
+            Item resolved = BuiltInRegistries.ITEM.getValue(Identifier.parse(item.itemId()));
+            ItemStack stack = new ItemStack(resolved, item.count());
+            if (!this.player.getInventory().add(stack)) {
+                this.player.drop(stack, false);
+            }
+            this.player.containerMenu.broadcastChanges();
+            return true;
         }
     }
 }

@@ -29,6 +29,10 @@ class BehaviorFactExtractorTest {
                 Map.entry("interaction.block_use.slot", "0"),
                 Map.entry("interaction.block_use.count", "1"),
                 Map.entry("interaction.block_use.side", "up"),
+                Map.entry("interaction.block_use.extract_slot", "1"),
+                Map.entry("interaction.block_use.extract_item", "minecraft:iron_ingot"),
+                Map.entry("interaction.block_use.extract_count", "2"),
+                Map.entry("interaction.block_use.extract_side", "down"),
                 Map.entry("machine.processing.recipe.0.input", "minecraft:stone"),
                 Map.entry("machine.processing.recipe.0.input_count", "1"),
                 Map.entry("machine.processing.recipe.0.output", "minecraft:iron_ingot"),
@@ -63,6 +67,10 @@ class BehaviorFactExtractorTest {
         assertEquals("0", facts.get("interaction.block_use.slot"));
         assertEquals("1", facts.get("interaction.block_use.count"));
         assertEquals("up", facts.get("interaction.block_use.side"));
+        assertEquals("1", facts.get("interaction.block_use.extract_slot"));
+        assertEquals("minecraft:iron_ingot", facts.get("interaction.block_use.extract_item"));
+        assertEquals("2", facts.get("interaction.block_use.extract_count"));
+        assertEquals("down", facts.get("interaction.block_use.extract_side"));
         assertEquals("minecraft:stone", facts.get("machine.processing.recipe.0.input"));
         assertEquals("minecraft:water", facts.get("machine.processing.recipe.0.fluid_input.0.fluid"));
         assertEquals("50", facts.get("machine.processing.recipe.0.energy_input"));

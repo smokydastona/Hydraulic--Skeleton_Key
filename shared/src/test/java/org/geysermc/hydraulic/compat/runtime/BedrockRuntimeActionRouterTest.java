@@ -89,7 +89,7 @@ class BedrockRuntimeActionRouterTest {
         BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
             routed,
             discovery,
-            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 2, 1, "up"),
+            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 2, 1, "up", null),
             held,
             null
         );
@@ -112,7 +112,7 @@ class BedrockRuntimeActionRouterTest {
         BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
             routed,
             discovery,
-            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null),
+            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null, null),
             held,
             null
         );
@@ -132,7 +132,7 @@ class BedrockRuntimeActionRouterTest {
         BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
             routed,
             discovery,
-            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 2, null),
+            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 2, null, null),
             held,
             null
         );
@@ -140,6 +140,102 @@ class BedrockRuntimeActionRouterTest {
         assertEquals(BedrockRuntimeActionRouter.Status.MUTATION_REJECTED, result.status());
         assertNull(automation.lastRequest);
         assertEquals(1, held.item.count());
+    }
+
+    @Test
+    void sneakingExtractsFromCompiledSlotAndDeliversItemToPlayer() {
+        RuntimeTraceId traceId = new RuntimeTraceId("bedrock-sneak-extract");
+        RecordingAutomationAccess automation = new RecordingAutomationAccess(true);
+        RuntimeTargetDiscovery discovery = discovery(new RuntimeTargetDiscovery.Target(MACHINE, new Object(), null, null), automation);
+        SneakingHeldItem held = new SneakingHeldItem(true, null);
+        BedrockRuntimeActionRouter.RuntimeActionResult routed = BedrockRuntimeActionRouter.route(blockUsePacket(), discovery, LEVEL, traceId);
+
+        BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
+            routed,
+            discovery,
+            new BlockUseActionPlan(
+                BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null,
+                new BlockUseActionPlan.ExtractAction(1, "minecraft:stone", 2, "down")
+            ),
+            held,
+            null
+        );
+
+        assertEquals(BedrockRuntimeActionRouter.Status.MUTATED, result.status());
+        assertEquals(TransferDirection.EXTRACT, automation.lastRequest.direction());
+        assertEquals(1, automation.lastRequest.slot());
+        assertEquals("minecraft:stone", automation.lastRequest.item().itemId());
+        assertEquals(2, automation.lastRequest.item().count());
+        assertEquals("down", automation.lastRequest.side());
+        assertEquals("minecraft:stone", held.given.itemId());
+        assertEquals(2, held.given.count());
+    }
+
+    @Test
+    void sneakingExtractionRejectionNeverDeliversAnItem() {
+        RuntimeTraceId traceId = new RuntimeTraceId("bedrock-sneak-extract-rejected");
+        RecordingAutomationAccess automation = new RecordingAutomationAccess(false);
+        RuntimeTargetDiscovery discovery = discovery(new RuntimeTargetDiscovery.Target(MACHINE, new Object(), null, null), automation);
+        SneakingHeldItem held = new SneakingHeldItem(true, null);
+        BedrockRuntimeActionRouter.RuntimeActionResult routed = BedrockRuntimeActionRouter.route(blockUsePacket(), discovery, LEVEL, traceId);
+
+        BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
+            routed,
+            discovery,
+            new BlockUseActionPlan(
+                BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null,
+                new BlockUseActionPlan.ExtractAction(1, "minecraft:stone", 1, null)
+            ),
+            held,
+            null
+        );
+
+        assertEquals(BedrockRuntimeActionRouter.Status.MUTATION_REJECTED, result.status());
+        assertNull(held.given);
+    }
+
+    @Test
+    void rejectsExtractionBeforeMutationWhenPlayerCannotReceiveItem() {
+        RuntimeTraceId traceId = new RuntimeTraceId("bedrock-sneak-extract-no-recipient");
+        RecordingAutomationAccess automation = new RecordingAutomationAccess(true);
+        RuntimeTargetDiscovery discovery = discovery(new RuntimeTargetDiscovery.Target(MACHINE, new Object(), null, null), automation);
+        SneakingHeldItem held = new SneakingHeldItem(true, null, false);
+        BedrockRuntimeActionRouter.RuntimeActionResult routed = BedrockRuntimeActionRouter.route(blockUsePacket(), discovery, LEVEL, traceId);
+
+        BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
+            routed,
+            discovery,
+            new BlockUseActionPlan(
+                BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null,
+                new BlockUseActionPlan.ExtractAction(1, "minecraft:stone", 1, null)
+            ),
+            held,
+            null
+        );
+
+        assertEquals(BedrockRuntimeActionRouter.Status.MUTATION_REJECTED, result.status());
+        assertNull(automation.lastRequest);
+        assertNull(held.given);
+    }
+
+    @Test
+    void sneakingWithoutCompiledExtractActionFallsBackToInsertion() {
+        RuntimeTraceId traceId = new RuntimeTraceId("bedrock-sneak-no-extract");
+        RecordingAutomationAccess automation = new RecordingAutomationAccess(true);
+        RuntimeTargetDiscovery discovery = discovery(new RuntimeTargetDiscovery.Target(MACHINE, new Object(), null, null), automation);
+        SneakingHeldItem held = new SneakingHeldItem(true, new TransferBridgeFactory.ItemStackView("minecraft:cobblestone", 4));
+        BedrockRuntimeActionRouter.RuntimeActionResult routed = BedrockRuntimeActionRouter.route(blockUsePacket(), discovery, LEVEL, traceId);
+
+        BedrockRuntimeActionRouter.RuntimeActionResult result = BedrockRuntimeActionRouter.executeItemAction(
+            routed,
+            discovery,
+            new BlockUseActionPlan(BlockUseActionPlan.Action.INSERT_HELD_ITEM, 0, 1, null, null),
+            held,
+            null
+        );
+
+        assertEquals(BedrockRuntimeActionRouter.Status.MUTATED, result.status());
+        assertEquals(TransferDirection.INSERT, automation.lastRequest.direction());
     }
 
     private static InventoryTransactionPacket blockUsePacket() {
@@ -176,6 +272,52 @@ class BedrockRuntimeActionRouterTest {
         @Override
         public void consume(int count) {
             this.item = new TransferBridgeFactory.ItemStackView(this.item.itemId(), this.item.count() - count);
+        }
+    }
+
+    private static final class SneakingHeldItem implements BedrockRuntimeActionRouter.HeldItemAccess {
+        private final boolean sneaking;
+        private final boolean deliverable;
+        private TransferBridgeFactory.ItemStackView item;
+        private TransferBridgeFactory.ItemStackView given;
+
+        private SneakingHeldItem(boolean sneaking, TransferBridgeFactory.ItemStackView item) {
+            this(sneaking, item, true);
+        }
+
+        private SneakingHeldItem(boolean sneaking, TransferBridgeFactory.ItemStackView item, boolean deliverable) {
+            this.sneaking = sneaking;
+            this.item = item;
+            this.deliverable = deliverable;
+        }
+
+        @Override
+        public TransferBridgeFactory.ItemStackView heldItem() {
+            return this.item;
+        }
+
+        @Override
+        public void consume(int count) {
+            this.item = new TransferBridgeFactory.ItemStackView(this.item.itemId(), this.item.count() - count);
+        }
+
+        @Override
+        public boolean isSneaking() {
+            return this.sneaking;
+        }
+
+        @Override
+        public boolean canGive(TransferBridgeFactory.ItemStackView item) {
+            return this.deliverable;
+        }
+
+        @Override
+        public boolean give(TransferBridgeFactory.ItemStackView item) {
+            if (!this.deliverable) {
+                return false;
+            }
+            this.given = item;
+            return true;
         }
     }
 

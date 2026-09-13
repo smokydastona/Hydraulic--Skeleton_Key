@@ -33,7 +33,11 @@
             "action": "insert_held_item",
             "slot": 0,
             "count": 1,
-            "side": "up"
+            "side": "up",
+            "extract_slot": 1,
+            "extract_item": "minecraft:stone",
+            "extract_count": 1,
+            "extract_side": "down"
           }
         },
         "transfer": {
