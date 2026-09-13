@@ -79,6 +79,10 @@ public abstract class PackModule<T extends PackModule<T>> {
         return !this.preProcessors.isEmpty();
     }
 
+    protected boolean requiresParsedPacks() {
+        return false;
+    }
+
     void preProcess0(@NotNull PackPreProcessContext<T> context) {
         for (Consumer<PackPreProcessContext<T>> preProcessor : this.preProcessors) {
             try {

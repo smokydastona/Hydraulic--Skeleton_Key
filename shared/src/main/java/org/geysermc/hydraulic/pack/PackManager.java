@@ -232,7 +232,7 @@ public class PackManager {
         this.loadModules();
         long resourcePackReadStarted = System.nanoTime();
         final Map<String, List<ResourcePack>> modPacks = Maps.newHashMapWithExpectedSize(mods.size());
-        if (this.modules.stream().anyMatch(PackModule::hasPreProcessors)) {
+        if (this.modules.stream().anyMatch(PackModule::requiresParsedPacks)) {
             for (final ModInfo mod : mods) {
                 List<ResourcePack> packs = new ArrayList<>();
                 for (Path root : mod.roots()) {
