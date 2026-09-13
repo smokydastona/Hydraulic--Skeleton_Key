@@ -92,8 +92,8 @@ It is a fork that builds additional systems on top of the Hydraulic conversion a
 | Pack validation                   | Limited              | Dedicated validation report        |
 | Automatic compatibility decisions | Limited              | Expanded                           |
 | Mod-specific adapters             | Foundation           | Expanded adapter system            |
-| Machine/automation behavior       | Incomplete           | In development                     |
-| Fluid runtime behavior            | Incomplete           | In development                     |
+| Machine/automation behavior       | Incomplete           | Generic Java-side execution substrate; incomplete client validation |
+| Fluid runtime behavior            | Incomplete           | Generic Java-side transfer substrate; incomplete world-fluid translation |
 
 The important distinction is that **Phlodgate is trying to add the compatibility and runtime layers that sit between Hydraulic's conversion pipeline and the actual behavior of a mod.**
 
@@ -344,22 +344,18 @@ Generating a Bedrock block or menu for these systems is only the presentation la
 
 Phlodgate's long-term goal is to bridge the underlying behavior as well.
 
-### Current limitation
+### Current runtime boundary
 
-**Universal machine, automation and deeper fluid runtime behavior are not finished.**
+Phlodgate has generic Java-server-side item, fluid, energy, transaction, machine-processing,
+automation, dirty-state, synchronization-planning, and Geyser transport seams. They execute
+only when a compiled runtime plan has concrete capability facts and a real target bridge; malformed
+or incomplete plans fail closed. A machine is not advertised as executable merely because its
+model, menu, or one transfer operation is available.
 
-The current fluid system can analyze fluid content and handle some presentation-related compatibility, but it does not yet provide a universal translation layer for:
-
-* world fluid simulation
-* world fluid simulation
-* universal recipe discovery
-* machine-specific fluid and energy semantics
-* network synchronization for custom machines
-* arbitrary automation systems and filtering semantics
-
-These are active areas of development.
-
-Phlodgate will not claim that a machine is fully supported simply because its block and GUI can be displayed.
+The remaining gaps are still material: automatic semantic and recipe discovery for arbitrary
+mods, world-fluid translation, richer menu and block-entity behavior, generic ticking-machine
+session synchronization, and live Bedrock-client observation of delivered state. These are not
+silently papered over by the companion add-on.
 
 ---
 
@@ -387,9 +383,29 @@ add-on execution model to hook into when the backing server is a Java server. Be
   makes the behavior pack execute through Geyser.
 * The one genuine Java-to-Bedrock "behavior" signal Phlodgate implements is a real scoreboard
   objective, `phlodgate_bridge`, created via the vanilla scoreboard API and translated to Bedrock
-  by Geyser like any other objective. Companions can detect a live Hydraulic-Phlodgate server by
-  checking for this objective (or for modded item/entity namespaces already visible through
-  Geyser's own custom content registration) instead of relying on anything Geyser cannot deliver.
+       by Geyser like any other objective. The bundled add-on directly checks this canonical objective
+       during its companion-mode poll; it can also report modded namespaces already visible through
+       Geyser's own custom-content registration.
+
+### Companion component contract
+
+The bundled companion is a first-class Phlodgate component, but it is deliberately mod-agnostic.
+It must consume stable identifiers and typed capability contracts rather than branch on Java mod
+names. Phlodgate remains authoritative for Java-world mutation, compatibility decisions, and
+transport. An explicitly installed and enabled Bedrock behavior pack may provide client-local
+generic primitives such as forms, inspection, HUD presentation, and local settings; it cannot
+turn an unimplemented Java-side machine, fluid, automation, or synchronization bridge into a
+working server behavior.
+
+The intended flow is:
+
+```text
+Java content -> compiled compatibility/runtime plan -> Hydraulic Java bridge -> Geyser transport
+                                           -> companion resource presentation / manually enabled client behavior
+```
+
+No companion feature may claim arbitrary Java-mod execution based only on a generated resource
+pack, an addon manifest, or a client-side Script API implementation.
 
 ### Package layout
 

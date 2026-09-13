@@ -1748,6 +1748,29 @@ This baseline is real and should be preserved.
 ## Phase 0.5: Local Integration Harness (VS Code)
 Priority: high, non-blocking for Phases 1-8
 
+### Companion add-on boundary (implemented)
+
+`Plodgate_Add-on` is the first-class, mod-agnostic Bedrock companion component. Its resource pack
+is built and delivered through Geyser by Hydraulic's companion package subsystem, while its
+behavior pack remains an explicitly installed/enabled client-local Script API component because
+Geyser cannot deploy or execute behavior packs for Java-server sessions. Hydraulic installs the
+canonical `phlodgate_bridge` scoreboard objective; the add-on directly polls that objective as its
+authoritative companion-mode handshake. This signal proves only server detection, not generic
+machine, fluid, automation, or synchronization execution.
+
+The locked responsibility split is:
+
+```text
+Hydraulic / Java server: capability analysis, compiled plans, authoritative mutation, persistence,
+                         synchronization planning, and Geyser transport
+Companion add-on:        mod-agnostic client presentation, forms, inspection, local settings, and
+                         optionally enabled client-local Script API behavior
+```
+
+No companion capability may branch on a Java mod identifier or claim a server behavior unless a
+concrete, compiled Java-side bridge and transport result exist. This preserves the intended
+`Java content -> runtime plan -> Java bridge -> Geyser -> Bedrock presentation` architecture.
+
 This phase does not introduce another runtime architecture. It gives the fork a repeatable, local way
 to prove the architecture that already exists, using `.vscode` orchestration around the real Gradle/Loom
 tasks, the real compatibility runtime classes, and the real handoff/report artifacts already emitted by
