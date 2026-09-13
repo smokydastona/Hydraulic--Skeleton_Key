@@ -233,21 +233,24 @@ public class PackManager {
         modelProvider = createModelProvider(this.modResourceIndexes, this.getVanillaPath());
         long modelIndexBuildMillis = nanosToMillis(System.nanoTime() - modelProviderStarted);
 
+        this.loadModules();
         long resourcePackReadStarted = System.nanoTime();
         final Map<String, List<ResourcePack>> modPacks = Maps.newHashMapWithExpectedSize(mods.size());
-        for (final ModInfo mod : mods) {
-            List<ResourcePack> packs = new ArrayList<>();
-            for (Path root : mod.roots()) {
-                try {
-                    ResourcePack pack = MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(root));
-                    packs.add(pack);
-                } catch (Exception e) {
-                    LOGGER.warn("Failed to read resource pack from mod '{}' at path '{}': {}", 
-                        mod.id(), root, e.getMessage());
+        if (this.modules.stream().anyMatch(PackModule::hasPreProcessors)) {
+            for (final ModInfo mod : mods) {
+                List<ResourcePack> packs = new ArrayList<>();
+                for (Path root : mod.roots()) {
+                    try {
+                        ResourcePack pack = MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(root));
+                        packs.add(pack);
+                    } catch (Exception e) {
+                        LOGGER.warn("Failed to read resource pack from mod '{}' at path '{}': {}",
+                            mod.id(), root, e.getMessage());
+                    }
                 }
-            }
-            if (!packs.isEmpty()) {
-                modPacks.put(mod.id(), packs);
+                if (!packs.isEmpty()) {
+                    modPacks.put(mod.id(), packs);
+                }
             }
         }
         long resourcePackReadMillis = nanosToMillis(System.nanoTime() - resourcePackReadStarted);
@@ -281,14 +284,7 @@ public class PackManager {
         this.packConverters = new ArrayList<>(AssetConverters.converters(hydraulic.isDev()));
         this.packConverters.remove(AssetConverters.MANIFEST);
 
-        for (PackModule<?> module : ServiceLoader.load(PackModule.class)) {
-            this.modules.add(module);
-
-            GeyserApi.api().eventBus().register(this.hydraulic, module);
-            module.eventListeners().forEach((eventClass, listeners) -> {
-                GeyserApi.api().eventBus().subscribe(this.hydraulic, eventClass, this::callEvents);
-            });
-
+        for (PackModule<?> module : this.modules) {
             for (ModInfo mod : mods) {
                 if (shouldIgnoreMod(mod)) {
                     continue;
@@ -300,7 +296,7 @@ public class PackManager {
 
                 if (module.hasPreProcessors()) {
                     try {
-                        this.preProcessModule(module, mod, modPacks.get(mod.id()));
+                        this.preProcessModule(module, mod, modPacks.getOrDefault(mod.id(), List.of()));
                     } catch (Throwable t) {
                         LOGGER.error("Failed to pre-process mod {} for module {}", mod.id(), module.getClass().getSimpleName(), t);
                     }
@@ -316,6 +312,16 @@ public class PackManager {
             packListener.ensurePacksPrepared();
         } catch (Throwable t) {
             LOGGER.error("Failed to prepare Hydraulic resource packs during startup", t);
+        }
+    }
+
+    private void loadModules() {
+        for (PackModule<?> module : ServiceLoader.load(PackModule.class)) {
+            this.modules.add(module);
+            GeyserApi.api().eventBus().register(this.hydraulic, module);
+            module.eventListeners().forEach((eventClass, listeners) ->
+                GeyserApi.api().eventBus().subscribe(this.hydraulic, eventClass, this::callEvents)
+            );
         }
     }
 
