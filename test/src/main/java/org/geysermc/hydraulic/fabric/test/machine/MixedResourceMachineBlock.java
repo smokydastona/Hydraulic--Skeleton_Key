@@ -49,10 +49,7 @@ public final class MixedResourceMachineBlock extends ResourceMachineBlock {
         if (plan == null) {
             return;
         }
-        TransferBridgeFactory.ItemTransferBridge items = TransferBridgeFactory.createItemTransfer(plan, machine);
-        TransferBridgeFactory.FluidTransferBridge fluids = TransferBridgeFactory.createFluidTransfer(plan, machine);
-        TransferBridgeFactory.EnergyTransferBridge energy = TransferBridgeFactory.createEnergyTransfer(plan, machine);
-        MixedResourceMachineProcessingBridge processing = MachineBridgeFactory.createMixedProcessing(plan, items, fluids, energy);
+        MixedResourceMachineProcessingBridge processing = machine.processing(plan);
         if (processing != null) {
             processing.tick(identifier);
         }

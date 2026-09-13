@@ -95,12 +95,7 @@ public final class ProcessingMachineBlock extends Block implements EntityBlock {
             return;
         }
 
-        TransferBridgeFactory.ItemTransferBridge itemTransfer = TransferBridgeFactory.createItemTransfer(plan, machine);
-        if (itemTransfer == null) {
-            return;
-        }
-
-        MachineProcessingBridge processing = MachineBridgeFactory.createProcessing(plan, itemTransfer);
+        MachineProcessingBridge processing = machine.processing(plan);
         if (processing == null) {
             return;
         }

@@ -352,6 +352,11 @@ only when a compiled runtime plan has concrete capability facts and a real targe
 or incomplete plans fail closed. A machine is not advertised as executable merely because its
 model, menu, or one transfer operation is available.
 
+Stateful processing bridges are retained by the live machine block entity, so recipe progress
+persists across server ticks instead of resetting during bridge reconstruction. Tick-driven
+delivery remains deliberately limited to an explicitly identified compatible Bedrock container;
+Phlodgate does not broadcast machine inventory packets to arbitrary sessions.
+
 The remaining gaps are still material: automatic semantic and recipe discovery for arbitrary
 mods, world-fluid translation, richer menu and block-entity behavior, generic ticking-machine
 session synchronization, and live Bedrock-client observation of delivered state. These are not

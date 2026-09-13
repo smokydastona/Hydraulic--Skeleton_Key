@@ -2,6 +2,10 @@ package org.geysermc.hydraulic.fabric.test.machine;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import org.geysermc.hydraulic.compat.ir.CompiledCompatibilityPlan;
+import org.geysermc.hydraulic.compat.runtime.MachineBridgeFactory;
+import org.geysermc.hydraulic.compat.runtime.MachineProcessingBridge;
+import org.geysermc.hydraulic.compat.runtime.TransferBridgeFactory;
 import org.geysermc.hydraulic.fabric.test.ModBlockEntities;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +18,17 @@ public final class ProcessingMachineBlockEntity extends ReflectiveItemStorageBlo
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
     private static final int SLOT_COUNT = 2;
+    private MachineProcessingBridge processing;
 
     public ProcessingMachineBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         super(ModBlockEntities.PROCESSING_MACHINE, pos, state, SLOT_COUNT);
+    }
+
+    public MachineProcessingBridge processing(@NotNull CompiledCompatibilityPlan plan) {
+        if (this.processing == null || this.processing.plan() != plan) {
+            TransferBridgeFactory.ItemTransferBridge itemTransfer = TransferBridgeFactory.createItemTransfer(plan, this);
+            this.processing = itemTransfer == null ? null : MachineBridgeFactory.createProcessing(plan, itemTransfer);
+        }
+        return this.processing;
     }
 }

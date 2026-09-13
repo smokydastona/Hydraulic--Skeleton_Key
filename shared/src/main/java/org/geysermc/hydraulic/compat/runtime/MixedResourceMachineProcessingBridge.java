@@ -81,6 +81,11 @@ public final class MixedResourceMachineProcessingBridge {
         return this.progress;
     }
 
+    @NotNull
+    public CompiledCompatibilityPlan plan() {
+        return this.plan;
+    }
+
     public boolean active() {
         return this.activeRecipe != null;
     }
