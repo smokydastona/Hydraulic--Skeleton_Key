@@ -1778,6 +1778,44 @@ No companion capability may branch on a Java mod identifier or claim a server be
 concrete, compiled Java-side bridge and transport result exist. This preserves the intended
 `Java content -> runtime plan -> Java bridge -> Geyser -> Bedrock presentation` architecture.
 
+### Behavior-pack execution research gate (unproven)
+
+**Status: `UNSUPPORTED / UNPROVEN`.** No production packet injection or behavior-pack deployment
+may be added while this status remains unchanged.
+
+**Falsifiable hypothesis:** a Geyser/Phlodgate implementation might cause an official Bedrock
+client connected to a Java server to receive, activate, and execute a Bedrock behavior pack for
+that session using protocol and Geyser-side mechanisms only.
+
+The current evidence does not establish that hypothesis: Geyser supports resource-pack delivery,
+does not support behavior packs or add-ons, and Java/Geyser sessions do not provide a Bedrock
+world runtime. A downloaded, cached, acknowledged, or displayed pack is not an activated or
+executing behavior pack.
+
+The investigation must run only in an isolated experimental Geyser fork or extension, never in
+Hydraulic production code. It must inspect the current Geyser pack-negotiation flow and exact
+Bedrock protocol definitions, identify any behavior-pack stack fields, document why Geyser omits
+them if applicable, and record Bedrock client/protocol versions plus packet captures.
+
+The proof ladder is mandatory:
+
+1. Behavior-pack metadata can be represented in the negotiated protocol.
+2. The official client requests and downloads the behavior pack.
+3. The client accepts the pack into the session pack stack.
+4. `@minecraft/server` initializes for that ordinary Java/Geyser session.
+5. A behavior-pack script executes or ticks and emits a uniquely generated marker that Hydraulic
+  cannot produce itself.
+6. That script causes an observable, connected-world effect.
+7. The result works on current supported Bedrock versions; reconnect behavior is recorded
+  separately as an optional persistence result.
+
+**Pass condition:** an actual behavior-pack Script API program executes on a real official Bedrock
+client during an ordinary Java/Geyser session and produces the independent marker plus observable
+world effect. **Failure condition:** any lower result, including transfer completion or pack-stack
+acknowledgement without Script API execution. Until a pass is recorded, `Plodgate_Add-on/BP` stays
+a normally installable standalone Bedrock-world component and never a claimed automatic Geyser
+session component.
+
 This phase does not introduce another runtime architecture. It gives the fork a repeatable, local way
 to prove the architecture that already exists, using `.vscode` orchestration around the real Gradle/Loom
 tasks, the real compatibility runtime classes, and the real handoff/report artifacts already emitted by
