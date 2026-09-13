@@ -119,7 +119,6 @@ public class PackManager {
     private final TextureResolutionCache textureResolutionCache = new TextureResolutionCache();
     private final PackValidator packValidator = new PackValidator();
     private final List<PackModule<?>> modules = new ArrayList<>();
-    private PackCdnServer cdnServer;
 
     private final ListMultimap<String, ModInfo> namespacesToMods = MultimapBuilder.hashKeys().arrayListValues(1).build();
     private final ListMultimap<String, Identifier> modsToBlocks = MultimapBuilder.hashKeys().arrayListValues().build();
@@ -184,9 +183,6 @@ public class PackManager {
         this.javaModCorpusLoader.loadIndex();
         this.javaModCorpusLoader.refreshIndexFromSnapshots();
         this.javaModCorpusReportWriter.writeReport(this.javaModCorpusLoader.index(), this.javaModCorpusLoader.loadAdmissibleEntries());
-
-        this.cdnServer = new PackCdnServer(LOGGER, hydraulic.dataFolder(Constants.MOD_ID).resolve("packs"), 8088);
-        this.cdnServer.start();
 
         long resourceIndexStarted = System.nanoTime();
         LookupSummary lookupSummary = initializeModLookups();
